@@ -1,9 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.ufpe.cin.if710.podcast.ui.EpisodeDetailActivity">
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools">
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:text="Título do Podcast"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <TextView
+        android:id="@+id/pubDate_tv"
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:text="Data de publicação"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="52dp" />
+
+    <TextView
+        android:id="@+id/description_tv"
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        android:text="Descrição"
+        android:textAlignment="viewStart"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="134dp" />
+
+</LinearLayout>
