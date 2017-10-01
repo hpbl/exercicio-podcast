@@ -61,7 +61,8 @@ public class PodcastProvider extends ContentProvider {
         final SQLiteDatabase db = this.mPodcastDBHelper.getWritableDatabase();
 
         Uri returnUri;
-        Long id = db.insert(PodcastProviderContract.EPISODE_TABLE, null, values);
+        // atualizando a entrada na tabela caso já exista o podcast
+        Long id = db.replace(PodcastProviderContract.EPISODE_TABLE, null, values);
 
         if (id > 0) {
             //inserção feita com sucesso
