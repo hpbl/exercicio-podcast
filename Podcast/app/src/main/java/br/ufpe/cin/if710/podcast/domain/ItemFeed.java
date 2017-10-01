@@ -38,6 +38,11 @@ public class ItemFeed {
 
     @Override
     public String toString() {
-        return title;
+
+        return title + "\n" +
+                link + "\n" +
+                pubDate + "\n" +
+                description + "\n" +
+                downloadLink + "\n";
     }
 }
