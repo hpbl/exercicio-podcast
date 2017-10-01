@@ -101,7 +101,20 @@ public class PodcastProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-        // TODO: Implement this to handle requests to update one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        // COMPLETED: Implement this to handle requests to update one or more rows.
+        // pegando referência ao banco com permissão de escrita
+        final SQLiteDatabase db = this.mPodcastDBHelper.getWritableDatabase();
+
+        int numUpdated = db.update(PodcastProviderContract.EPISODE_TABLE,
+                values,
+                selection,
+                selectionArgs);
+
+        if (numUpdated != 0) {
+            // notificando modificação
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return numUpdated;
     }
 }
