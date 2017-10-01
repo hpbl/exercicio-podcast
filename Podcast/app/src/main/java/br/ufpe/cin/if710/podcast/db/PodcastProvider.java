@@ -43,6 +43,7 @@ public class PodcastProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         // COMPLETED: Implement this to handle requests to insert a new row.
+        // pegando referência ao banco com permissão de escrita
         final SQLiteDatabase db = this.mPodcastDBHelper.getWritableDatabase();
 
         Uri returnUri;
@@ -64,8 +65,23 @@ public class PodcastProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        // TODO: Implement this to handle query requests from clients.
-        throw new UnsupportedOperationException("Not yet implemented");
+        // COMPLETED: Implement this to handle query requests from clients.
+        // pegando referência ao banco com permissão de leitura
+        final SQLiteDatabase db = this.mPodcastDBHelper.getReadableDatabase();
+
+        // consultando o banco repassando os parâmetros
+        Cursor cursor = db.query(PodcastProviderContract.EPISODE_TABLE,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder);
+
+        // alertando o cursor se houverem mudanças na URI
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        return cursor;
     }
 
     @Override
