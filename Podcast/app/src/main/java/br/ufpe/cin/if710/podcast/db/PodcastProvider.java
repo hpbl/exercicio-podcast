@@ -30,7 +30,21 @@ public class PodcastProvider extends ContentProvider {
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         //  Implement this to handle requests to delete one or more rows.
-        throw new UnsupportedOperationException("Not yet implemented");
+        // acessando o banco com permissão de escrita
+        final SQLiteDatabase db = this.mPodcastDBHelper.getWritableDatabase();
+
+        // deletando do banco
+        int numDeleted = db.delete(PodcastProviderContract.EPISODE_TABLE,
+                        selection,
+                        selectionArgs);
+
+
+        if (numDeleted != 0) {
+            // notificando remoção
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return numDeleted;
     }
 
     @Override
