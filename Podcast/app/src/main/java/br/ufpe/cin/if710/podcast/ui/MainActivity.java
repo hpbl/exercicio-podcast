@@ -1,15 +1,21 @@
 package br.ufpe.cin.if710.podcast.ui;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.facebook.stetho.Stetho;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -22,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ufpe.cin.if710.podcast.R;
+import br.ufpe.cin.if710.podcast.db.PodcastDBHelper;
+import br.ufpe.cin.if710.podcast.db.PodcastProvider;
+import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.domain.XmlFeedParser;
 import br.ufpe.cin.if710.podcast.ui.adapter.XmlFeedAdapter;
@@ -40,6 +49,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         items = (ListView) findViewById(R.id.items);
+
+        Stetho.initializeWithDefaults(this);
     }
 
     @Override
@@ -87,6 +98,27 @@ public class MainActivity extends Activity {
             List<ItemFeed> itemList = new ArrayList<>();
             try {
                 itemList = XmlFeedParser.parse(getRssFeed(params[0]));
+
+                for (ItemFeed item : itemList) {
+                    ContentValues content = new ContentValues();
+
+                    content.put(PodcastDBHelper.EPISODE_TITLE, item.getTitle());
+                    content.put(PodcastDBHelper.EPISODE_DATE, item.getPubDate());
+                    content.put(PodcastDBHelper.EPISODE_LINK, item.getLink());
+                    content.put(PodcastDBHelper.EPISODE_DESC, item.getDescription());
+                    content.put(PodcastDBHelper.EPISODE_DOWNLOAD_LINK, item.getDownloadLink());
+                    content.put(PodcastDBHelper.EPISODE_FILE_URI, "");
+
+                    Uri uri = getContentResolver().insert(PodcastProviderContract.EPISODE_LIST_URI,
+                            content);
+
+                    if (uri != null) {
+                        Log.d("Main Activity", "Item inseridos com sucesso");
+                    } else {
+                        Log.e("Main Activity", "Falha na inserção do item: " + item.toString());
+                    }
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (XmlPullParserException e) {
