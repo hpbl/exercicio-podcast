@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:paddingLeft="10dp">
 
     <TextView
         android:id="@+id/title_tv"
@@ -12,16 +12,15 @@
         android:layout_height="wrap_content"
         android:text="Título do Podcast"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="16dp" />
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"/>
 
     <TextView
         android:id="@+id/pubDate_tv"
         android:layout_width="368dp"
         android:layout_height="wrap_content"
         android:text="Data de publicação"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="52dp" />
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"/>
 
     <TextView
         android:id="@+id/description_tv"
@@ -30,7 +29,6 @@
         android:text="Descrição"
         android:textAlignment="viewStart"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="134dp" />
+        android:layout_marginTop="20dp"/>
 
 </LinearLayout>
