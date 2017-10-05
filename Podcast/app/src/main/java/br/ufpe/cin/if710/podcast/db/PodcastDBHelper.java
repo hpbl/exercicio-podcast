@@ -24,25 +24,15 @@ public class PodcastDBHelper extends SQLiteOpenHelper {
         return db;
     }
 
-    public final static String EPISODE_TITLE = "title";
-    public final static String EPISODE_DATE = "pubDate";
-    public final static String EPISODE_LINK = "link";
-    public final static String EPISODE_DESC = "description";
-    public final static String EPISODE_DOWNLOAD_LINK = "downloadLink";
-    public final static String EPISODE_FILE_URI = "downloadUri";
 
-    public final static String[] columns = {
-            EPISODE_LINK, EPISODE_TITLE, EPISODE_DATE,
-            EPISODE_DESC, EPISODE_DOWNLOAD_LINK, EPISODE_FILE_URI
-    };
     final private static String CREATE_CMD =
             "CREATE TABLE "+DATABASE_TABLE+" ("
-                    + EPISODE_LINK + " TEXT PRIMARY KEY NOT NULL, "
-                    + EPISODE_TITLE + " TEXT NOT NULL, "
-                    + EPISODE_DATE + " TEXT NOT NULL, "
-                    + EPISODE_DESC + " TEXT NOT NULL, "
-                    + EPISODE_DOWNLOAD_LINK + " TEXT NOT NULL, "
-                    + EPISODE_FILE_URI + " TEXT NOT NULL)";
+                    + PodcastProviderContract.EPISODE_LINK + " TEXT PRIMARY KEY NOT NULL, "
+                    + PodcastProviderContract.EPISODE_TITLE + " TEXT NOT NULL, "
+                    + PodcastProviderContract.EPISODE_DATE + " TEXT NOT NULL, "
+                    + PodcastProviderContract.EPISODE_DESC + " TEXT NOT NULL, "
+                    + PodcastProviderContract.EPISODE_DOWNLOAD_LINK + " TEXT NOT NULL, "
+                    + PodcastProviderContract.EPISODE_FILE_URI + " TEXT NOT NULL)";
 
 
 

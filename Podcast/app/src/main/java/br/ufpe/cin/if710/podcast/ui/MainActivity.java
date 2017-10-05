@@ -102,12 +102,12 @@ public class MainActivity extends Activity {
                 for (ItemFeed item : itemList) {
                     ContentValues content = new ContentValues();
 
-                    content.put(PodcastDBHelper.EPISODE_TITLE, item.getTitle());
-                    content.put(PodcastDBHelper.EPISODE_DATE, item.getPubDate());
-                    content.put(PodcastDBHelper.EPISODE_LINK, item.getLink());
-                    content.put(PodcastDBHelper.EPISODE_DESC, item.getDescription());
-                    content.put(PodcastDBHelper.EPISODE_DOWNLOAD_LINK, item.getDownloadLink());
-                    content.put(PodcastDBHelper.EPISODE_FILE_URI, "");
+                    content.put(PodcastProviderContract.EPISODE_TITLE, item.getTitle());
+                    content.put(PodcastProviderContract.EPISODE_DATE, item.getPubDate());
+                    content.put(PodcastProviderContract.EPISODE_LINK, item.getLink());
+                    content.put(PodcastProviderContract.EPISODE_DESC, item.getDescription());
+                    content.put(PodcastProviderContract.EPISODE_DOWNLOAD_LINK, item.getDownloadLink());
+                    content.put(PodcastProviderContract.EPISODE_FILE_URI, "");
 
                     Uri uri = getContentResolver().insert(PodcastProviderContract.EPISODE_LIST_URI,
                             content);
