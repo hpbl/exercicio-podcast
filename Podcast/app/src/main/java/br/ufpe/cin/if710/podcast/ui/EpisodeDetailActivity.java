@@ -7,7 +7,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import br.ufpe.cin.if710.podcast.R;
-import br.ufpe.cin.if710.podcast.ui.adapter.XmlFeedAdapter;
+import br.ufpe.cin.if710.podcast.ui.adapter.PodcastItemAdapter;
 
 public class EpisodeDetailActivity extends Activity {
     private TextView mTitleTV;
@@ -27,9 +27,9 @@ public class EpisodeDetailActivity extends Activity {
         this.mDescriptionTV = findViewById(R.id.description_tv);
         this.mPubDateTV = findViewById(R.id.pubDate_tv);
 
-        this.mTitleTV.setText(this.getIntent().getExtras().getString(XmlFeedAdapter.TITLE_EXTRA));
-        this.mDescriptionTV.setText(this.getIntent().getExtras().getString(XmlFeedAdapter.DESCRIPTION_EXTRA));
-        this.mPubDateTV.setText(this.getIntent().getExtras().getString(XmlFeedAdapter.PUBDATE_EXTRA));
+        this.mTitleTV.setText(this.getIntent().getExtras().getString(PodcastItemAdapter.TITLE_EXTRA));
+        this.mDescriptionTV.setText(this.getIntent().getExtras().getString(PodcastItemAdapter.DESCRIPTION_EXTRA));
+        this.mPubDateTV.setText(this.getIntent().getExtras().getString(PodcastItemAdapter.PUBDATE_EXTRA));
     }
 
     @Override
