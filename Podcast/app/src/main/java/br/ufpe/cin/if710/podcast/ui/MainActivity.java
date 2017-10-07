@@ -52,19 +52,6 @@ public class MainActivity extends Activity {
         Stetho.initializeWithDefaults(this);
     }
 
-    // função para conferir se usuário tem conexão com a a internet
-    private boolean hasNetworkConnection() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-
-        return isConnected;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -90,15 +77,8 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
 
-        /* conferindo se o usuário tem conexão com a internet
-           para saber se deve ser feito o parse do XML */
-        if (this.hasNetworkConnection()) {
-            new DownloadXmlTask().execute(RSS_FEED);
-            Log.d("MAINACTIVITY", "COM INTERNET");
-        } else {
-            Log.d("MAINACTIVITY", "SEM INTERNET");
-            new DataBaseTask().execute();
-        }
+        // conferindo conexão com a internet
+        new NetworkCheckTask().execute();
     }
 
     @Override
@@ -111,6 +91,7 @@ public class MainActivity extends Activity {
             adapter.clear();
         }
     }
+
 
     // AssyncTask para pegar podcasts do banco de dados
     private class DataBaseTask extends  AsyncTask<Void, Void, Cursor> {
@@ -238,5 +219,62 @@ public class MainActivity extends Activity {
             }
         }
         return rssFeed;
+    }
+
+    // assync task para testar conexão com a internet
+    private class NetworkCheckTask extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            if (this.isNetworkAvailable()) {
+                // fazendo ping do google para ver se a conexão está funcionando
+                try {
+                    HttpURLConnection urlc = (HttpURLConnection)
+                            (new URL("http://clients3.google.com/generate_204")
+                                    .openConnection());
+                    urlc.setRequestProperty("User-Agent", "Android");
+                    urlc.setRequestProperty("Connection", "close");
+                    urlc.setConnectTimeout(1500);
+                    urlc.connect();
+                    return (urlc.getResponseCode() == 204 &&
+                            urlc.getContentLength() == 0);
+                } catch (IOException e) {
+                    Log.w("NetworkCheckTask", "Error checking internet connection", e);
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            /* conferindo se o usuário tem conexão com a internet
+           para saber se deve ser feito o parse do XML */
+            if (result) {
+                new DownloadXmlTask().execute(RSS_FEED);
+                Log.d("MAINACTIVITY", "COM INTERNET");
+            } else {
+                Log.d("MAINACTIVITY", "SEM INTERNET");
+                new DataBaseTask().execute();
+            }
+
+        }
+
+        // função para conferir se usuário está com conexão ativa
+        private boolean isNetworkAvailable() {
+            ConnectivityManager cm =
+                    (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+            boolean isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+
+            return isConnected;
+        }
     }
 }
