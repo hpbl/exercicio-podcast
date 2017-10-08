@@ -163,8 +163,10 @@ public class MainActivity extends Activity {
                     String date = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DATE));
                     String description = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DESC));
                     String downloadLink = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DOWNLOAD_LINK));
+                    String localUri = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_FILE_URI));
 
                     ItemFeed item = new ItemFeed(title, link, date, description, downloadLink);
+                    item.setLocalURI(localUri);
                     items.add(item);
                 }
 
@@ -255,6 +257,7 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onPreExecute() {
+            Toast.makeText(getApplicationContext(), "checando conexão", Toast.LENGTH_SHORT).show();
         }
 
         @Override
