@@ -60,21 +60,22 @@ public class PodcastProvider extends ContentProvider {
         // pegando referência ao banco com permissão de escrita
         final SQLiteDatabase db = this.mPodcastDBHelper.getWritableDatabase();
 
-        Uri returnUri;
-        // atualizando a entrada na tabela caso já exista o podcast
-        Long id = db.replace(PodcastProviderContract.EPISODE_TABLE, null, values);
+        // tentando inserir, mas se houver conflito (já existir) não insere
+        long id = db.insertWithOnConflict(PodcastProviderContract.EPISODE_TABLE,
+                null,
+                values,
+                SQLiteDatabase.CONFLICT_IGNORE);
 
-        if (id > 0) {
-            //inserção feita com sucesso
-            returnUri = ContentUris.withAppendedId(PodcastProviderContract.EPISODE_LIST_URI, id);
-            Log.d("PodcastProvider", returnUri.toString());
-        } else {
-            throw new android.database.SQLException("falha na inserção em: " + uri);
+        // se tiver dado conflito, faz update dos dados
+        if (id == -1) {
+            String primaryKey = PodcastProviderContract.EPISODE_LINK;
+            db.update(PodcastProviderContract.EPISODE_TABLE,
+                    values,
+                    PodcastProviderContract.EPISODE_LINK + "= \"" + values.getAsString(primaryKey) + "\"",
+                    null);
+
         }
-
-        getContext().getContentResolver().notifyChange(uri, null);
-
-        return returnUri;
+        return ContentUris.withAppendedId(PodcastProviderContract.EPISODE_LIST_URI, id);
     }
 
     @Override
