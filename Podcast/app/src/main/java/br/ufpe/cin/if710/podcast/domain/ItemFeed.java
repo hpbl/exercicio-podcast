@@ -6,6 +6,7 @@ public class ItemFeed {
     private final String pubDate;
     private final String description;
     private final String downloadLink;
+    private String localURI;
 
 
     public ItemFeed(String title, String link, String pubDate, String description, String downloadLink) {
@@ -14,6 +15,7 @@ public class ItemFeed {
         this.pubDate = pubDate;
         this.description = description;
         this.downloadLink = downloadLink;
+        this.localURI = "";
     }
 
     public String getTitle() {
@@ -44,5 +46,13 @@ public class ItemFeed {
                 pubDate + "\n" +
                 description + "\n" +
                 downloadLink + "\n";
+    }
+
+    public String getLocalURI() {
+        return localURI;
+    }
+
+    public void setLocalURI(String localURI) {
+        this.localURI = localURI;
     }
 }

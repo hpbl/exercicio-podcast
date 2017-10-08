@@ -11,11 +11,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
+import android.content.ClipData;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
@@ -28,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import br.ufpe.cin.if710.podcast.R;
+import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.ui.EpisodeDetailActivity;
 
@@ -96,7 +100,7 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
         holder.downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DownloadPodcast(getContext()).execute(item);
+                new DownloadPodcast(getContext(), item).execute();
             }
         });
 
@@ -104,13 +108,15 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
     }
 }
 
-class DownloadPodcast extends AsyncTask<ItemFeed, Integer, String> {
+class DownloadPodcast extends AsyncTask<Void, Integer, String> {
     private Context context;
     private String TAG = "DOWNLOAD TASK";
+    private ItemFeed item;
     File outputFile = null;
 
-    public DownloadPodcast(Context context) {
+    public DownloadPodcast(Context context, ItemFeed item) {
         this.context = context;
+        this.item = item;
     }
 
     @Override
@@ -119,10 +125,10 @@ class DownloadPodcast extends AsyncTask<ItemFeed, Integer, String> {
     }
 
     @Override
-    protected String doInBackground(ItemFeed... items) {
+    protected String doInBackground(Void ...voids) {
         try {
             // pegando url de download
-            URL url = new URL(items[0].getDownloadLink());
+            URL url = new URL(this.item.getDownloadLink());
 
             // abrindo conexão com método GET
             HttpURLConnection c = (HttpURLConnection) url.openConnection(); //
@@ -158,7 +164,7 @@ class DownloadPodcast extends AsyncTask<ItemFeed, Integer, String> {
             Log.d(TAG, "Diretório existente" + apkStorage.getAbsolutePath());
 
             // criando arquivo com nome escolhido
-            String fileName = items[0].getTitle() + ".mp3";
+            String fileName = this.item.getTitle() + ".mp3";
             outputFile = new File(apkStorage, fileName);
 
             // se o arquivo não existe no sistema, cria
@@ -176,6 +182,7 @@ class DownloadPodcast extends AsyncTask<ItemFeed, Integer, String> {
                 fileOutputStream.write(buffer, 0, len1);
             }
 
+            item.setLocalURI(outputFile.getPath());
             fileOutputStream.close();
             inputStream.close();
 
@@ -205,6 +212,16 @@ class DownloadPodcast extends AsyncTask<ItemFeed, Integer, String> {
         } else {
             Log.d(TAG, "Terminou de baixar!");
             Toast.makeText(this.context, "fim do download...", Toast.LENGTH_SHORT).show();
+
+            // adicionar URI de download no banco
+            ContentValues content = new ContentValues();
+            content.put(PodcastProviderContract.EPISODE_FILE_URI, item.getLocalURI());
+
+            //fazer update
+            context.getContentResolver().update(PodcastProviderContract.EPISODE_LIST_URI,
+                    content,
+                    PodcastProviderContract.EPISODE_LINK + "= \"" + item.getLink() + "\"",
+                    null);
         }
     }
 }
