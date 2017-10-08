@@ -18,9 +18,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,11 +58,18 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
         TextView item_title;
         TextView item_date;
         Button downloadButton;
+
+        MediaPlayer mediaPlayer;
+
+        public static final String baixar = "baixar";
+        public static final String tocar = "tocar";
+        public static final String pausar = "pausar";
+        public static final String retomar = "retomar";
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        final ViewHolder holder;
         if (convertView == null) {
             convertView = View.inflate(getContext(), linkResource, null);
             holder = new ViewHolder();
@@ -75,6 +84,10 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
         final ItemFeed item = getItem(position);
         holder.item_title.setText(item.getTitle());
         holder.item_date.setText(item.getPubDate());
+
+        if (!TextUtils.isEmpty(item.getLocalURI())) {
+            holder.downloadButton.setText(ViewHolder.tocar);
+        }
 
         // ouvindo clicks na lista (tem que ser aqui pois tem um botão na lista)
         // https://issuetracker.google.com/issues/36908602
@@ -100,7 +113,40 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
         holder.downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DownloadPodcast(getContext(), item).execute();
+                // se não foi baixado, baixa
+                if (TextUtils.isEmpty(item.getLocalURI())) {
+                    new DownloadPodcast(getContext(), item).execute();
+
+                } else {
+                    // caso contráio, confere qual o estado atual,
+                    // faz a ação correspondente no media player
+                    // e atualiza o título do botão
+                    Button button = (Button) view;
+
+                    switch (((Button) view).getText().toString()) {
+
+                        case ViewHolder.tocar:
+                            holder.mediaPlayer = MediaPlayer.create(getContext(),
+                                    Uri.parse(item.getLocalURI()));
+
+                            holder.mediaPlayer.setLooping(false);
+                            holder.mediaPlayer.start();
+
+                            button.setText(ViewHolder.pausar);
+                            break;
+
+                        case ViewHolder.pausar:
+                            holder.mediaPlayer.pause();
+
+                            button.setText(ViewHolder.retomar);
+                            break;
+
+                        case ViewHolder.retomar:
+                            holder.mediaPlayer.start();
+
+                            button.setText(ViewHolder.pausar);
+                    }
+                }
             }
         });
 
