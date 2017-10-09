@@ -59,6 +59,7 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
         TextView item_date;
         Button downloadButton;
 
+        ItemFeed item;
         MediaPlayer mediaPlayer;
 
         public static final String baixar = "baixar";
@@ -81,11 +82,12 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
             holder = (ViewHolder) convertView.getTag();
         }
         // item atual
-        final ItemFeed item = getItem(position);
-        holder.item_title.setText(item.getTitle());
-        holder.item_date.setText(item.getPubDate());
+        holder.item = getItem(position);
+        holder.item_title.setText(holder.item.getTitle());
+        holder.item_date.setText(holder.item.getPubDate());
 
-        if (!TextUtils.isEmpty(item.getLocalURI())) {
+        // se a URI não for vazia, significa que o podcast pode ser tocado
+        if (!holder.item.getLocalURI().equals(PodcastProviderContract.NO_URI)) {
             holder.downloadButton.setText(ViewHolder.tocar);
         }
 
@@ -99,10 +101,10 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
                 Intent detailIntent = new Intent(context, EpisodeDetailActivity.class);
 
                 // passando dados pela intent
-                detailIntent.putExtra(TITLE_EXTRA, item.getTitle());
-                detailIntent.putExtra(PUBDATE_EXTRA, item.getPubDate());
-                detailIntent.putExtra(DESCRIPTION_EXTRA, item.getDescription());
-                detailIntent.putExtra(DOWNLOAD_LINK_EXTRA, item.getDownloadLink());
+                detailIntent.putExtra(TITLE_EXTRA, holder.item.getTitle());
+                detailIntent.putExtra(PUBDATE_EXTRA, holder.item.getPubDate());
+                detailIntent.putExtra(DESCRIPTION_EXTRA, holder.item.getDescription());
+                detailIntent.putExtra(DOWNLOAD_LINK_EXTRA, holder.item.getDownloadLink());
 
                 // chamando trasição de tela
                 context.startActivity(detailIntent);
@@ -113,21 +115,21 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
         holder.downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // se não foi baixado, baixa
-                if (TextUtils.isEmpty(item.getLocalURI())) {
-                    new DownloadPodcast(getContext(), item).execute();
-
-                } else {
-                    // caso contráio, confere qual o estado atual,
+                    // confere qual o estado atual do botão,
                     // faz a ação correspondente no media player
-                    // e atualiza o título do botão
+                    // e atualiza o título do botão,
+                    // ou baixa o episódio
                     Button button = (Button) view;
 
-                    switch (((Button) view).getText().toString()) {
+                    switch (button.getText().toString()) {
+
+                        case ViewHolder.baixar:
+                            new DownloadPodcast(getContext(), holder).execute();
+                            break;
 
                         case ViewHolder.tocar:
                             holder.mediaPlayer = MediaPlayer.create(getContext(),
-                                    Uri.parse(item.getLocalURI()));
+                                    Uri.parse(holder.item.getLocalURI()));
 
                             holder.mediaPlayer.setLooping(false);
                             holder.mediaPlayer.start();
@@ -147,7 +149,6 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
                             button.setText(ViewHolder.pausar);
                     }
                 }
-            }
         });
 
         return convertView;
@@ -157,12 +158,12 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
 class DownloadPodcast extends AsyncTask<Void, Integer, String> {
     private Context context;
     private String TAG = "DOWNLOAD TASK";
-    private ItemFeed item;
+    private PodcastItemAdapter.ViewHolder holder;
     File outputFile = null;
 
-    public DownloadPodcast(Context context, ItemFeed item) {
+    public DownloadPodcast(Context context, PodcastItemAdapter.ViewHolder holder) {
         this.context = context;
-        this.item = item;
+        this.holder = holder;
     }
 
     @Override
@@ -174,7 +175,7 @@ class DownloadPodcast extends AsyncTask<Void, Integer, String> {
     protected String doInBackground(Void ...voids) {
         try {
             // pegando url de download
-            URL url = new URL(this.item.getDownloadLink());
+            URL url = new URL(this.holder.item.getDownloadLink());
 
             // abrindo conexão com método GET
             HttpURLConnection c = (HttpURLConnection) url.openConnection(); //
@@ -210,7 +211,7 @@ class DownloadPodcast extends AsyncTask<Void, Integer, String> {
             Log.d(TAG, "Diretório existente" + apkStorage.getAbsolutePath());
 
             // criando arquivo com nome escolhido
-            String fileName = this.item.getTitle() + ".mp3";
+            String fileName = this.holder.item.getTitle() + ".mp3";
             outputFile = new File(apkStorage, fileName);
 
             // se o arquivo não existe no sistema, cria
@@ -228,7 +229,7 @@ class DownloadPodcast extends AsyncTask<Void, Integer, String> {
                 fileOutputStream.write(buffer, 0, len1);
             }
 
-            item.setLocalURI(outputFile.getPath());
+            holder.item.setLocalURI(outputFile.getPath());
             fileOutputStream.close();
             inputStream.close();
 
@@ -261,13 +262,16 @@ class DownloadPodcast extends AsyncTask<Void, Integer, String> {
 
             // adicionar URI de download no banco
             ContentValues content = new ContentValues();
-            content.put(PodcastProviderContract.EPISODE_FILE_URI, item.getLocalURI());
+            content.put(PodcastProviderContract.EPISODE_FILE_URI, holder.item.getLocalURI());
 
             //fazer update
             context.getContentResolver().update(PodcastProviderContract.EPISODE_LIST_URI,
                     content,
-                    PodcastProviderContract.EPISODE_LINK + "= \"" + item.getLink() + "\"",
+                    PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
                     null);
+
+            //atualizar botão
+            holder.downloadButton.setText(PodcastItemAdapter.ViewHolder.tocar);
         }
     }
 }
