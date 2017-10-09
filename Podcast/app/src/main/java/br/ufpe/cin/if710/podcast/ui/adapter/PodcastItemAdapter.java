@@ -87,7 +87,7 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
         holder.item_date.setText(holder.item.getPubDate());
 
         // se a URI não for vazia, significa que o podcast pode ser tocado
-        if (!TextUtils.isEmpty(holder.item.getLocalURI())) {
+        if (!holder.item.getLocalURI().equals(PodcastProviderContract.NO_URI)) {
             holder.downloadButton.setText(ViewHolder.tocar);
         }
 

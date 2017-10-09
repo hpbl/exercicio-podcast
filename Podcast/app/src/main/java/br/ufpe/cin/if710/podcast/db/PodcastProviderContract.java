@@ -18,6 +18,8 @@ public class PodcastProviderContract {
 
     public static final String EPISODE_TABLE = "episodes";
 
+    public static final String NO_URI = "SEMURI";
+
 
     public final static String[] columns = {
             EPISODE_LINK, EPISODE_TITLE, EPISODE_DATE,

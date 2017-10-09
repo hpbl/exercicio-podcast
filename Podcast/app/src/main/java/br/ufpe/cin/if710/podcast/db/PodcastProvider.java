@@ -60,20 +60,19 @@ public class PodcastProvider extends ContentProvider {
         // pegando referência ao banco com permissão de escrita
         final SQLiteDatabase db = this.mPodcastDBHelper.getWritableDatabase();
 
-        // tentando inserir, mas se houver conflito (já existir) não insere
-        long id = db.insertWithOnConflict(PodcastProviderContract.EPISODE_TABLE,
-                null,
+        // tentando fazer update, mas se não existir o item
+        String primaryKey = PodcastProviderContract.EPISODE_LINK;
+        long id = db.update(PodcastProviderContract.EPISODE_TABLE,
                 values,
-                SQLiteDatabase.CONFLICT_IGNORE);
+                primaryKey + "= \"" + values.getAsString(primaryKey) + "\"",
+                null);
 
-        // se tiver dado conflito, faz update dos dados
-        if (id == -1) {
-            String primaryKey = PodcastProviderContract.EPISODE_LINK;
-            db.update(PodcastProviderContract.EPISODE_TABLE,
-                    values,
-                    PodcastProviderContract.EPISODE_LINK + "= \"" + values.getAsString(primaryKey) + "\"",
-                    null);
-
+        // insere ele no banco
+        if (id == 0) {
+            values.put(PodcastProviderContract.EPISODE_FILE_URI, PodcastProviderContract.NO_URI);
+            db.insert(PodcastProviderContract.EPISODE_TABLE,
+                    null,
+                    values);
         }
         return ContentUris.withAppendedId(PodcastProviderContract.EPISODE_LIST_URI, id);
     }
