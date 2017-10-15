@@ -2,9 +2,11 @@ package br.ufpe.cin.if710.podcast.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
@@ -45,9 +47,10 @@ public class MainActivity extends Activity {
 
     //ao fazer envio da resolucao, use este link no seu codigo!
     private final String RSS_FEED = "http://leopoldomt.com/if710/fronteirasdaciencia.xml";
-    //TODO teste com outros links de podcast
+    //COMPLETED teste com outros links de podcast
 
     private ListView itemsListView;
+    private FinishedDownloadingReceiver broadcastReceiver;
 
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -109,6 +112,9 @@ public class MainActivity extends Activity {
 
         // conferindo conexão com a internet
         new NetworkCheckTask().execute();
+
+        // registrando broadcast receiver
+        this.registerReceiver();
     }
 
     @Override
@@ -120,6 +126,8 @@ public class MainActivity extends Activity {
         if (adapter != null) {
             adapter.clear();
         }
+
+        this.unregisterReceiver(this.broadcastReceiver);
     }
 
 
@@ -182,76 +190,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class DownloadXmlTask extends AsyncTask<String, Void, List<ItemFeed>> {
-        @Override
-        protected void onPreExecute() {
-            Toast.makeText(getApplicationContext(), "lendo XML", Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        protected List<ItemFeed> doInBackground(String... params) {
-            List<ItemFeed> itemList = new ArrayList<>();
-            try {
-                itemList = XmlFeedParser.parse(getRssFeed(params[0]));
-
-                for (ItemFeed item : itemList) {
-                    ContentValues content = new ContentValues();
-
-                    content.put(PodcastProviderContract.EPISODE_TITLE, item.getTitle());
-                    content.put(PodcastProviderContract.EPISODE_DATE, item.getPubDate());
-                    content.put(PodcastProviderContract.EPISODE_LINK, item.getLink());
-                    content.put(PodcastProviderContract.EPISODE_DESC, item.getDescription());
-                    content.put(PodcastProviderContract.EPISODE_DOWNLOAD_LINK, item.getDownloadLink());
-
-                    Uri uri = getContentResolver().insert(PodcastProviderContract.EPISODE_LIST_URI,
-                            content);
-
-                    if (uri != null) {
-                        Log.d("Main Activity", "Item inseridos com sucesso");
-                    } else {
-                        Log.e("Main Activity", "Falha na inserção do item: " + item.toString());
-                    }
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (XmlPullParserException e) {
-                e.printStackTrace();
-            }
-
-            return itemList;
-        }
-
-        @Override
-        protected void onPostExecute(List<ItemFeed> feed) {
-            // uma vez atualizado o conteúdo do banco, use o mesmo para povoar a listVew
-            new DataBaseTask().execute();
-        }
-    }
-
-    //TODO Opcional - pesquise outros meios de obter arquivos da internet
-    private String getRssFeed(String feed) throws IOException {
-        InputStream in = null;
-        String rssFeed = "";
-        try {
-            URL url = new URL(feed);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            in = conn.getInputStream();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            for (int count; (count = in.read(buffer)) != -1; ) {
-                out.write(buffer, 0, count);
-            }
-            byte[] response = out.toByteArray();
-            rssFeed = new String(response, "UTF-8");
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
-        return rssFeed;
-    }
-
     // assync task para testar conexão com a internet
     private class NetworkCheckTask extends AsyncTask<String, Void, Boolean> {
 
@@ -287,8 +225,14 @@ public class MainActivity extends Activity {
             /* conferindo se o usuário tem conexão com a internet
            para saber se deve ser feito o parse do XML */
             if (result) {
-                new DownloadXmlTask().execute(RSS_FEED);
                 Log.d("MAINACTIVITY", "COM INTERNET");
+                Toast.makeText(getApplicationContext(), "Lendo Feed", Toast.LENGTH_SHORT).show();
+
+                // iniciando IntentService que vai fazer o parse do XML e salvar no banco
+                Intent downloadXML = new Intent(getApplicationContext(), DownloadXMLIntentService.class);
+                downloadXML.putExtra(DownloadXMLIntentService.FEED_EXTRA, RSS_FEED);
+                getApplicationContext().startService(downloadXML);
+
             } else {
                 Log.d("MAINACTIVITY", "SEM INTERNET");
                 new DataBaseTask().execute();
@@ -309,4 +253,25 @@ public class MainActivity extends Activity {
             return isConnected;
         }
     }
+
+
+
+    public class FinishedDownloadingReceiver extends BroadcastReceiver {
+        public static final String ACTION_FINISHED_DOWNLOADING_XML = "ACTION_FINISHED_DOWNLOADING_XML";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // atualize a interface com os dados do banco
+            new MainActivity.DataBaseTask().execute();
+        }
+    }
+
+    private void registerReceiver() {
+        IntentFilter filter = new IntentFilter(FinishedDownloadingReceiver.ACTION_FINISHED_DOWNLOADING_XML);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+
+        this.broadcastReceiver = new FinishedDownloadingReceiver();
+        registerReceiver(this.broadcastReceiver, filter);
+    }
 }
+
