@@ -2,6 +2,7 @@ package br.ufpe.cin.if710.podcast.ui;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,6 +53,8 @@ public class MainActivity extends Activity {
 
     private ListView itemsListView;
     private FinishedDownloadingReceiver broadcastReceiver;
+    private String TAG = "Main Activity";
+    private Boolean isInForeground = true;
 
     // Storage Permissions
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -69,6 +73,14 @@ public class MainActivity extends Activity {
         Stetho.initializeWithDefaults(this);
 
         checkDownloadPodcastsPermissions(this);
+
+        // registrando broadcast receiver
+        this.registerReceiver();
+
+        // conferindo conexão com a internet
+        new NetworkCheckTask().execute();
+
+        Log.d(this.TAG, "hpbl ON CREATE");
     }
 
     public static void checkDownloadPodcastsPermissions(Activity activity) {
@@ -110,11 +122,30 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
 
-        // conferindo conexão com a internet
-        new NetworkCheckTask().execute();
+        // carregando dados do banco
+        if (!this.isInForeground) {
+            new DataBaseTask().execute();
+        }
 
-        // registrando broadcast receiver
-        this.registerReceiver();
+        Log.d(this.TAG, "hpbl ON START");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        this.isInForeground = true;
+
+        Log.d(this.TAG, "hpbl ON RESUME");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        this.isInForeground = false;
+
+        Log.d(this.TAG, "hpbl ON PAUSE");
     }
 
     @Override
@@ -127,7 +158,9 @@ public class MainActivity extends Activity {
             adapter.clear();
         }
 
-        this.unregisterReceiver(this.broadcastReceiver);
+        //this.unregisterReceiver(this.broadcastReceiver);
+
+        Log.d(this.TAG, "hpbl ON STOP");
     }
 
 
@@ -261,8 +294,33 @@ public class MainActivity extends Activity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            // atualize a interface com os dados do banco
-            new MainActivity.DataBaseTask().execute();
+            // se o app estiver em foreground,
+            if (isInForeground) {
+                // atualize a interface com os dados do banco
+                new MainActivity.DataBaseTask().execute();
+            } else {
+                // notifique o usuário
+                Log.d("DownloadingReceiver", "em background");
+                this.sendNotification();
+            }
+        }
+
+        public void sendNotification() {
+            // acessando NotificationManager
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(getApplicationContext())
+                            .setSmallIcon(R.mipmap.ic_launcher_round)
+                            .setContentTitle("My notification")
+                            .setContentText("Hello World!");
+
+
+            // acessando serviço
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+            // notificando
+            mNotificationManager.notify(001, mBuilder.build());
         }
     }
 
