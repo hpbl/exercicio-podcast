@@ -139,14 +139,6 @@ public class MainActivity extends Activity {
         Log.d(this.TAG, "hpbl ON RESUME");
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        this.isInForeground = false;
-
-        Log.d(this.TAG, "hpbl ON PAUSE");
-    }
 
     @Override
     protected void onStop() {
@@ -158,11 +150,17 @@ public class MainActivity extends Activity {
             adapter.clear();
         }
 
-        //this.unregisterReceiver(this.broadcastReceiver);
+        this.isInForeground = false;
 
         Log.d(this.TAG, "hpbl ON STOP");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        this.unregisterReceiver(this.broadcastReceiver);
+    }
 
     // AssyncTask para pegar podcasts do banco de dados
     private class DataBaseTask extends  AsyncTask<Void, Void, Cursor> {
@@ -205,9 +203,18 @@ public class MainActivity extends Activity {
                     String description = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DESC));
                     String downloadLink = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DOWNLOAD_LINK));
                     String localUri = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_FILE_URI));
+                    String playbackTime = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_PLAYBACK_TIME));
 
                     ItemFeed item = new ItemFeed(title, link, date, description, downloadLink);
                     item.setLocalURI(localUri);
+
+                    if (playbackTime != null) {
+                        int time = Integer.parseInt(playbackTime);
+                        item.setPlaybackTime(time);
+                    } else {
+                        item.setPlaybackTime(0);
+                    }
+
                     items.add(item);
                 }
 

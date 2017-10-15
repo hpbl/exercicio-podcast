@@ -45,6 +45,8 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
     public static final String DESCRIPTION_EXTRA = "Description";
     public static final String DOWNLOAD_LINK_EXTRA = "DownloadLink";
 
+    private String TAG = "Podcast Adapter";
+
     int linkResource;
 
     public PodcastItemAdapter(Context context, int resource, List<ItemFeed> objects) {
@@ -91,6 +93,45 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
             holder.downloadButton.setText(ViewHolder.tocar);
         }
 
+        // configurando botão e mediaplayer caso o
+        // podcast já tenha começado a ser ouvido antes
+        if (holder.item.getPlaybackTime() > 0) {
+            holder.downloadButton.setText(ViewHolder.retomar);
+
+            holder.mediaPlayer = MediaPlayer.create(getContext(),
+                    Uri.parse(holder.item.getLocalURI()));
+
+            holder.mediaPlayer.setLooping(false);
+
+            holder.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    File podcast = new File(holder.item.getLocalURI());
+
+                    if (podcast.delete()) {
+                        holder.item.setPlaybackTime(0);
+
+                        // salvando nova URI e playback novos no banco
+                        ContentValues content = new ContentValues();
+                        content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
+                        content.put(PodcastProviderContract.EPISODE_FILE_URI, PodcastProviderContract.NO_URI);
+
+                        //fazer update
+                        getContext()
+                                .getContentResolver()
+                                .update(PodcastProviderContract.EPISODE_LIST_URI,
+                                        content,
+                                        PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
+                                        null);
+
+                        holder.downloadButton.setText(ViewHolder.baixar);
+                    } else {
+                        Log.e(TAG, "ERRO NA HORA DE APAGAR PODCAST");
+                    }
+                }
+            });
+        }
+
         // ouvindo clicks na lista (tem que ser aqui pois tem um botão na lista)
         // https://issuetracker.google.com/issues/36908602
         holder.item_title.setOnClickListener(new View.OnClickListener() {
@@ -134,16 +175,64 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
                             holder.mediaPlayer.setLooping(false);
                             holder.mediaPlayer.start();
 
+                            holder.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                @Override
+                                public void onCompletion(MediaPlayer mediaPlayer) {
+                                    File podcast = new File(holder.item.getLocalURI());
+
+                                    if (podcast.delete()) {
+                                        holder.item.setPlaybackTime(0);
+
+                                        // salvando nova URI e playback novos no banco
+                                        ContentValues content = new ContentValues();
+                                        content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
+                                        content.put(PodcastProviderContract.EPISODE_FILE_URI, PodcastProviderContract.NO_URI);
+
+                                        //fazer update
+                                        getContext()
+                                                .getContentResolver()
+                                                .update(PodcastProviderContract.EPISODE_LIST_URI,
+                                                        content,
+                                                        PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
+                                                        null);
+
+                                        holder.downloadButton.setText(ViewHolder.baixar);
+                                    } else {
+                                        Log.e(TAG, "ERRO NA HORA DE APAGAR PODCAST");
+                                    }
+                                }
+                            });
+
                             button.setText(ViewHolder.pausar);
                             break;
 
                         case ViewHolder.pausar:
                             holder.mediaPlayer.pause();
 
+                            int currentPosition = holder.mediaPlayer.getCurrentPosition();
+                            Log.d(TAG, "current position: " + currentPosition);
+                            holder.item.setPlaybackTime(currentPosition);
+
+                            //salvar a posição atual no banco
+                            ContentValues content = new ContentValues();
+                            content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
+
+                            //fazer update
+                            getContext()
+                                    .getContentResolver()
+                                    .update(PodcastProviderContract.EPISODE_LIST_URI,
+                                            content,
+                                            PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
+                                            null);
+
                             button.setText(ViewHolder.retomar);
                             break;
 
                         case ViewHolder.retomar:
+                            // avança para o último momento ouvido
+                            Log.d(TAG, String.valueOf(holder.item.getPlaybackTime()));
+
+                            holder.mediaPlayer.seekTo(holder.item.getPlaybackTime());
                             holder.mediaPlayer.start();
 
                             button.setText(ViewHolder.pausar);

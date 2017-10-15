@@ -7,6 +7,7 @@ public class ItemFeed {
     private final String description;
     private final String downloadLink;
     private String localURI;
+    private int playbackTime;
 
 
     public ItemFeed(String title, String link, String pubDate, String description, String downloadLink) {
@@ -54,5 +55,13 @@ public class ItemFeed {
 
     public void setLocalURI(String localURI) {
         this.localURI = localURI;
+    }
+
+    public int getPlaybackTime() {
+        return playbackTime;
+    }
+
+    public void setPlaybackTime(int playbackTime) {
+        this.playbackTime = playbackTime;
     }
 }

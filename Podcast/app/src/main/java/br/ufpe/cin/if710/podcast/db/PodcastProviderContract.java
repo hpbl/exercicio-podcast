@@ -15,6 +15,7 @@ public class PodcastProviderContract {
     public final static String EPISODE_DESC = "description";
     public final static String EPISODE_DOWNLOAD_LINK = "downloadLink";
     public final static String EPISODE_FILE_URI = "downloadUri";
+    public final static String EPISODE_PLAYBACK_TIME = "playbackTime";
 
     public static final String EPISODE_TABLE = "episodes";
 
@@ -23,7 +24,8 @@ public class PodcastProviderContract {
 
     public final static String[] columns = {
             EPISODE_LINK, EPISODE_TITLE, EPISODE_DATE,
-            EPISODE_DESC, EPISODE_DOWNLOAD_LINK, EPISODE_FILE_URI
+            EPISODE_DESC, EPISODE_DOWNLOAD_LINK, EPISODE_FILE_URI,
+            EPISODE_PLAYBACK_TIME
     };
 
     private static final Uri BASE_LIST_URI = Uri.parse("content://br.ufpe.cin.if710.podcast.feed/");
