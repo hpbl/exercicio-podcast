@@ -32,7 +32,8 @@ public class PodcastDBHelper extends SQLiteOpenHelper {
                     + PodcastProviderContract.EPISODE_DATE + " TEXT NOT NULL, "
                     + PodcastProviderContract.EPISODE_DESC + " TEXT NOT NULL, "
                     + PodcastProviderContract.EPISODE_DOWNLOAD_LINK + " TEXT NOT NULL, "
-                    + PodcastProviderContract.EPISODE_FILE_URI + " TEXT NOT NULL)";
+                    + PodcastProviderContract.EPISODE_FILE_URI + " TEXT NOT NULL, "
+                    + PodcastProviderContract.EPISODE_PLAYBACK_TIME + " TEXT)";
 
 
 
