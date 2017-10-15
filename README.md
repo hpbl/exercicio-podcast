@@ -53,8 +53,8 @@ episódio, atualizações em segundo plano, notificações de novos episódios, 
 | 8 | **✅** |
 | 9 | **✅** |
 | 10 | **✅** |
-| 11 | **não** |
-| 12 | **não** |
+| 11 | **✅** |
+| 12 | **✅** |
 | 13 | **não** |
 | 14 | **não** |
 | 15 | **não** |
