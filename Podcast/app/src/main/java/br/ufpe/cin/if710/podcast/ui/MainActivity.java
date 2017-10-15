@@ -310,8 +310,8 @@ public class MainActivity extends Activity {
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(getApplicationContext())
                             .setSmallIcon(R.mipmap.ic_launcher_round)
-                            .setContentTitle("My notification")
-                            .setContentText("Hello World!");
+                            .setContentTitle("Seus podcasts estão prontos")
+                            .setContentText("Abra o app para ver o que tem de novo");
 
 
             // acessando serviço
