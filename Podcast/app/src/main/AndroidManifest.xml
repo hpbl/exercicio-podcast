@@ -31,6 +31,8 @@
         <activity
             android:name=".ui.EpisodeDetailActivity"
             android:parentActivityName=".ui.MainActivity"></activity>
+
+        <service android:name=".ui.DownloadXMLIntentService" />
     </application>
 
 </manifest>
