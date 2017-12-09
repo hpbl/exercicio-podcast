@@ -103,7 +103,7 @@ Diferentemente das outras tags, *enclosure* é self-closing, e por isso necessit
     }
 ```
 
-![UnitTestsResult](images/UnitTestsResult.jpg)
+![UnitTestsResult](images/UnitTestsResult.png)
 
 ----------
 
