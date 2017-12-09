@@ -33,3 +33,13 @@ Na situação 4, Há picos de processamento nos momentos do clique. A imagem mos
 Na situação 5, Há um significativo nível de processamento ocorrido, uma vez que o scrolling traz a consequência de carregar visualmente mais elementos ao usuário.
 
 ![AndroidProfiler](Images/AndroidProfiler/CPU/cpu_scrolling_tela.png)
+
+
+AndroidDevMetrics
+-----------------
+
+O *AndroidDevMetrics* é uma biblioteca responsável por avaliar métricas de performance em sistemas Android. É capaz de analisar métricas de ciclo de vida de *Activities*, quedas de *Frame Rate*, dentre outros.
+
+Como relatado na issue https://github.com/frogermcs/AndroidDevMetrics/issues/38 , o uso do *AndroidDevMetrics* só ocorre para projetos na API 25, enquanto que o Podcast está na API 26.
+
+Tentamos alterar o projeto para a API 25, mas isso ocasionou no erro em algumas partes do código, impossibilitando a análise do Podcast com o *AndroidDevMetrics*.
