@@ -18,7 +18,7 @@ Na situação 1, não houveram mudanças no desempenho ao longo do tempo.
 
 ![UnitTestsResult](Images/AndroidProfiler/CPU/cpu_sem_interacao.png)
 
-Na situação 2, também não houveram mudanças significativas no desempenho enquanto o podcast era tocado. Isso ocorre, pois a execução de áudios não demanda muito processamento da máquina.
+Na situação 2, também não houveram mudanças significativas no desempenho enquanto o podcast era tocado. Isso ocorre pois a execução de áudios não demanda muito processamento da máquina.
 
 ![UnitTestsResult](Images/AndroidProfiler/CPU/cpu_play_podcast.png)
 
@@ -26,7 +26,7 @@ Na situação 3, Há um certo uso de processamento, porém esse uso não se mant
 
 ![UnitTestsResult](Images/AndroidProfiler/CPU/cpu_download_podcast.png)
 
-Na situação 4, Há picos de processamento nos momentos do clique. A imagem abaixo mostra esses picos, os quais representam os três cliques efetuados.
+Na situação 4, Há picos de processamento nos momentos do clique. A imagem mostra esses picos, os quais representam os três cliques efetuados.
 
 ![UnitTestsResult](Images/AndroidProfiler/CPU/cpu_clique_tela.png)
 

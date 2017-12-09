@@ -15,8 +15,18 @@ Primeiramente, utilizamos o *Android Profiler* para obter informações a respei
 
 Nas situações 1 e 2, o uso de memória manteve-se completamente regular durante o tempo.
 
-Na situação 3, há um leve aumento de uso de memória no momento de encerramento do download do podcast.
+![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_sem_interacao.png)
 
-Na situação 4, há pequenos aumentos no uso de memória ao serem realizados os cliques. Na imagem abaixo, pode-se observar dois desses aumentos, quando três cliques foram realizados.
+![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_play_podcast.png)
+
+Na situação 3, há um leve aumento no consumo de memória no momento de encerramento do download do podcast.
+
+![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_download_podcast.png)
+
+Na situação 4, há pequenos aumentos no consumo de memória ao serem realizados os cliques. Na imagem abaixo, pode-se observar dois desses aumentos, quando três cliques foram realizados.
+
+![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_clique_tela.png)
 
 Na situação 5, pode-se observar pequenos aumentos constantes no uso de memória ao serem realizados os scrollings.
+
+![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_scrolling_tela.png)

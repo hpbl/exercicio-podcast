@@ -15,4 +15,14 @@ Primeiramente, utilizamos o *Android Profiler* para obter informações a respei
 
 Nas situações 1, 2, 4 e 5, não há uso de rede pela aplicação.
 
+![UnitTestsResult](Images/AndroidProfiler/Rede/rede_sem_interacao.png)
+
+![UnitTestsResult](Images/AndroidProfiler/Rede/rede_play_podcast.png)
+
+![UnitTestsResult](Images/AndroidProfiler/Rede/rede_clique_tela.png)
+
+![UnitTestsResult](Images/AndroidProfiler/Rede/rede_scrolling_tela.png)
+
 Na situação 3, há um uso intenso e regular de rede pela aplicação, uma vez que o download de um podcast está sendo realizado.
+
+![UnitTestsResult](Images/AndroidProfiler/Rede/rede_download_podcast.png)
