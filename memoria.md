@@ -38,4 +38,4 @@ O *LeakCanary* é uma biblioteca para *Android* e *Java*, a qual é responsável
 
 Pudemos realizar essa avaliação com o LeakCanary para as situações 2 e 3, e não houve a detecção de *memory leaks* pela interface do *LeakCanary*, como mostra a imagem. Para a situação 2, o teste da execução do podcast durou mais de 9 minutos.
 
-![LeakCanary](Images/LeakCanary/no_leaks_detected.png)
+![LeakCanary](images/LeakCanary/no_leaks_detected.png)
