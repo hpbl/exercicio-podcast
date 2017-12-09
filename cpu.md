@@ -16,20 +16,20 @@ Primeiramente, utilizamos o *Android Profiler* para obter informações a respei
 
 Na situação 1, não houveram mudanças no desempenho ao longo do tempo.
 
-![UnitTestsResult](Images/AndroidProfiler/CPU/cpu_sem_interacao.png)
+![AndroidProfiler](Images/AndroidProfiler/CPU/cpu_sem_interacao.png)
 
 Na situação 2, também não houveram mudanças significativas no desempenho enquanto o podcast era tocado. Isso ocorre pois a execução de áudios não demanda muito processamento da máquina.
 
-![UnitTestsResult](Images/AndroidProfiler/CPU/cpu_play_podcast.png)
+![AndroidProfiler](Images/AndroidProfiler/CPU/cpu_play_podcast.png)
 
 Na situação 3, Há um certo uso de processamento, porém esse uso não se mantém uniforme ao longo do tempo.
 
-![UnitTestsResult](Images/AndroidProfiler/CPU/cpu_download_podcast.png)
+![AndroidProfiler](Images/AndroidProfiler/CPU/cpu_download_podcast.png)
 
 Na situação 4, Há picos de processamento nos momentos do clique. A imagem mostra esses picos, os quais representam os três cliques efetuados.
 
-![UnitTestsResult](Images/AndroidProfiler/CPU/cpu_clique_tela.png)
+![AndroidProfiler](Images/AndroidProfiler/CPU/cpu_clique_tela.png)
 
 Na situação 5, Há um significativo nível de processamento ocorrido, uma vez que o scrolling traz a consequência de carregar visualmente mais elementos ao usuário.
 
-![UnitTestsResult](Images/AndroidProfiler/CPU/cpu_scrolling_tela.png)
+![AndroidProfiler](Images/AndroidProfiler/CPU/cpu_scrolling_tela.png)

@@ -15,21 +15,21 @@ Primeiramente, utilizamos o *Android Profiler* para obter informações a respei
 
 Nas situações 1 e 2, o uso de memória manteve-se completamente regular durante o tempo.
 
-![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_sem_interacao.png)
+![AndroidProfiler](Images/AndroidProfiler/Memoria/memoria_sem_interacao.png)
 
-![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_play_podcast.png)
+![AndroidProfiler](Images/AndroidProfiler/Memoria/memoria_play_podcast.png)
 
 Na situação 3, há um leve aumento no consumo de memória no momento de encerramento do download do podcast.
 
-![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_download_podcast.png)
+![AndroidProfiler](Images/AndroidProfiler/Memoria/memoria_download_podcast.png)
 
 Na situação 4, há pequenos aumentos no consumo de memória ao serem realizados os cliques. Na imagem abaixo, pode-se observar dois desses aumentos, quando três cliques foram realizados.
 
-![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_clique_tela.png)
+![AndroidProfiler](Images/AndroidProfiler/Memoria/memoria_clique_tela.png)
 
 Na situação 5, pode-se observar pequenos aumentos constantes no uso de memória ao serem realizados os scrollings.
 
-![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_scrolling_tela.png)
+![AndroidProfiler](Images/AndroidProfiler/Memoria/memoria_scrolling_tela.png)
 
 LeakCanary
 -----------------
@@ -38,4 +38,4 @@ O *LeakCanary* é uma biblioteca para *Android* e *Java*, a qual é responsável
 
 Pudemos realizar essa avaliação com o LeakCanary para as situações 2 e 3, e não houve a detecção de *memory leaks* pela interface do *LeakCanary*, como mostra a imagem. Para a situação 2, o teste da execução do podcast durou mais de 9 minutos.
 
-![UnitTestsResult](Images/LeakCanary/no_leaks_detected.png)
+![LeakCanary](Images/LeakCanary/no_leaks_detected.png)
