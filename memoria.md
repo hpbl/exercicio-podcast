@@ -30,3 +30,12 @@ Na situação 4, há pequenos aumentos no consumo de memória ao serem realizado
 Na situação 5, pode-se observar pequenos aumentos constantes no uso de memória ao serem realizados os scrollings.
 
 ![UnitTestsResult](Images/AndroidProfiler/Memoria/memoria_scrolling_tela.png)
+
+LeakCanary
+-----------------
+
+O *LeakCanary* é uma biblioteca para *Android* e *Java*, a qual é responsável por detectar vazamentos no uso de memória, os quais podem ser evitados.
+
+Pudemos realizar essa avaliação com o LeakCanary para as situações 2 e 3, e não houve a detecção de *memory leaks* pela interface do *LeakCanary*, como mostra a imagem. Para a situação 2, o teste da execução do podcast durou mais de 9 minutos.
+
+![UnitTestsResult](Images/LeakCanary/no_leaks_detected.png)
