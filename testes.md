@@ -175,3 +175,33 @@ Para conseguir a referência ao item específico da lista, criamos um FeatureMat
     }
 ```
 
+
+3. Os dados passados pra tela de detalhes estão certos?
+Queriamos saber se quando o usuário tocar num podcast da lista, os detalhes apresentados na activity seguinte são realmente do podcast selecionado.
+
+```java
+    @Test
+    public void tap_showsRightDetails() {
+        String title = "O Homem foi mesmo até a Lua?";
+        String description = "Programa 2";
+        String date = "Sun, 20 Jun 2010 10:45:05 GMT";
+
+        SystemClock.sleep(40000);
+
+        onData(withItemTitle(title))
+                .inAdapterView(withId(R.id.items))
+                .onChildView(withId(R.id.item_title))
+                .perform(click());
+
+
+        // on EpisodeDetailActivity
+        onView(withId(R.id.title_tv))
+                .check(matches(withText(title)));
+
+        onView(withId(R.id.description_tv))
+                .check(matches(withText(description)));
+
+        onView(withId(R.id.pubDate_tv))
+                .check(matches(withText(date)));
+    }
+```
