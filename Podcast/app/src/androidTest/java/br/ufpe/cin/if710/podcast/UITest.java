@@ -1,9 +1,11 @@
 package br.ufpe.cin.if710.podcast;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.DataInteraction;
+import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -15,6 +17,8 @@ import org.hamcrest.Description;
 import org.hamcrest.FeatureMatcher;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,15 +60,27 @@ public class UITest {
         assertEquals("br.ufpe.cin.if710.podcast", appContext.getPackageName());
     }
 
+    private MainActivityIdlingResource idlingResource;
+
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule =
             new ActivityTestRule(MainActivity.class);
 
+    @Before
+    public void registerIntentServiceIdlingResource() {
+        MainActivity activity = this.mActivityRule.getActivity();
+        this.idlingResource = new MainActivityIdlingResource(activity);
+        registerIdlingResources(idlingResource);
+    }
+
+    @After
+    public void unregisterIntentServiceIdlingResource() {
+        unregisterIdlingResources(idlingResource);
+    }
+
     @Test
     public void firstPodcast_isCiencia() {
         String expected = "Ciência e Pseudociência";
-
-        SystemClock.sleep(35000);
 
         onData(anything())
                 .inAdapterView(withId(R.id.items))
@@ -78,8 +94,6 @@ public class UITest {
         String title = "Frontdaciência - T08E29 - Mario Bunge I";
         String expectedDate = "Mon, 18 Sep 2017 12:00:00 GMT";
 
-        SystemClock.sleep(35000);
-
         onData(withItemTitle(title))
                 .inAdapterView(withId(R.id.items))
                 .onChildView(withId(R.id.item_date))
@@ -91,8 +105,6 @@ public class UITest {
         String title = "O Homem foi mesmo até a Lua?";
         String description = "Programa 2";
         String date = "Sun, 20 Jun 2010 10:45:05 GMT";
-
-        SystemClock.sleep(40000);
 
         onData(withItemTitle(title))
                 .inAdapterView(withId(R.id.items))
@@ -122,4 +134,35 @@ public class UITest {
     }
 
 
+    public class MainActivityIdlingResource implements IdlingResource {
+
+        private MainActivity activity;
+        private ResourceCallback callback;
+
+        public MainActivityIdlingResource(MainActivity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        public String getName() {
+            return "MainActivityIdleName";
+        }
+
+        @Override
+        public boolean isIdleNow() {
+            Boolean idle = isIdle();
+            if (idle) callback.onTransitionToIdle();
+            return idle;
+        }
+
+        public boolean isIdle() {
+            return activity != null && callback != null && activity.broadcastReceiver.getResultCode() == Activity.RESULT_OK;
+        }
+
+        @Override
+        public void registerIdleTransitionCallback(ResourceCallback resourceCallback) {
+            this.callback = resourceCallback;
+        }
+    }
 }
+
