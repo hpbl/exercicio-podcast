@@ -126,6 +126,63 @@ Testes De Interface:
 
 Os testes de interface foram realizados usando Espresso, com o intuito de verificar se a interface foi disposta, e reage a ações corretamente.
 
+Como todos os testes de interface a seguir dependem que a lista de podcasts já esteja apresentada, ou seja, dependem de uma ou mais tarefas assíncronas, utilizamos de uma subclasse de `IdlingResource` para que os testes sejam executados apenas após indicativo de sucesso no `FinishedDownloadingReceiver` da `MainActivity`.
+
+```java
+    public class MainActivityIdlingResource implements IdlingResource {
+
+        private MainActivity activity;
+        private ResourceCallback callback;
+
+        public MainActivityIdlingResource(MainActivity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        public String getName() {
+            return "MainActivityIdleName";
+        }
+
+        @Override
+        public boolean isIdleNow() {
+            Boolean idle = isIdle();
+            if (idle) callback.onTransitionToIdle();
+            return idle;
+        }
+
+        public boolean isIdle() {
+            return activity != null && callback != null && activity.broadcastReceiver.getResultCode() == Activity.RESULT_OK;
+        }
+
+        @Override
+        public void registerIdleTransitionCallback(ResourceCallback resourceCallback) {
+            this.callback = resourceCallback;
+        }
+    }
+```
+
+Antes de rodar os testes fazemos o registro do `idlingResource` que é do tipo definido acima, e após, desfazemos:
+```java
+    private MainActivityIdlingResource idlingResource;
+
+    @Rule
+    public ActivityTestRule<MainActivity> mActivityRule =
+            new ActivityTestRule(MainActivity.class);
+
+    @Before
+    public void registerIntentServiceIdlingResource() {
+        MainActivity activity = this.mActivityRule.getActivity();
+        this.idlingResource = new MainActivityIdlingResource(activity);
+        registerIdlingResources(idlingResource);
+    }
+
+    @After
+    public void unregisterIntentServiceIdlingResource() {
+        unregisterIdlingResources(idlingResource);
+    }
+
+```
+
  1.  O primeiro podcast apresentado é o primeiro do XML?
  Queriamos saber se após fazer o parse do XML, e apresentar os resultados na tela, se foi mantida a ordem dos podcasts, sendo assim o primeiro a ser apresentado o que tem título: Ciência e Pseudociência
  
@@ -134,7 +191,6 @@ Os testes de interface foram realizados usando Espresso, com o intuito de verifi
     public void firstPodcast_isCiencia() {
         String expected = "Ciência e Pseudociência";
 
-        SystemClock.sleep(35000);
 
         onData(anything())
                 .inAdapterView(withId(R.id.items))
@@ -152,8 +208,6 @@ Queriamos saber se os dados dos podcasts estão condizentes, no caso, se o títu
     public void lastPodcast_hasRightDate() {
         String title = "Frontdaciência - T08E29 - Mario Bunge I";
         String expectedDate = "Mon, 18 Sep 2017 12:00:00 GMT";
-
-        SystemClock.sleep(35000);
 
         onData(withItemTitle(title))
                 .inAdapterView(withId(R.id.items))
@@ -186,8 +240,6 @@ Queriamos saber se quando o usuário tocar num podcast da lista, os detalhes apr
         String description = "Programa 2";
         String date = "Sun, 20 Jun 2010 10:45:05 GMT";
 
-        SystemClock.sleep(40000);
-
         onData(withItemTitle(title))
                 .inAdapterView(withId(R.id.items))
                 .onChildView(withId(R.id.item_title))
@@ -205,3 +257,7 @@ Queriamos saber se quando o usuário tocar num podcast da lista, os detalhes apr
                 .check(matches(withText(date)));
     }
 ```
+
+
+![UITestsResult](Images/UITestsResult.png)
+
