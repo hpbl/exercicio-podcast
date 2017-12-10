@@ -39,3 +39,27 @@ O *LeakCanary* é uma biblioteca para *Android* e *Java*, a qual é responsável
 Pudemos realizar essa avaliação com o LeakCanary para as situações 2 e 3, e não houve a detecção de *memory leaks* pela interface do *LeakCanary*, como mostra a imagem. Para a situação 2, o teste da execução do podcast durou mais de 9 minutos.
 
 ![LeakCanary](images/LeakCanary/no_leaks_detected.png)
+
+Boas práticas de desenvolvimento
+-----------------
+
+**RecyclerView**
+
+O widget *RecyclerView* é uma versão do *ListView*, no qual é um container capaz de exibir grandes conjuntos de dados, os quais podem ser rolados com mais eficiência quando mantendo um número limitado de visualizações. É interessante usar *RecyclerView* quando os dados coletados variam constantemente.
+
+Segue abaixo o uso de *RecyclerView* num trecho de código da função `getView`, no qual gerencia se é necessário que a view seja reciclada ou reutilizada.
+
+```Java
+	public View getView(int position, View convertView, ViewGroup parent) {
+        final ViewHolder holder;
+        if (convertView == null) {
+            convertView = View.inflate(getContext(), linkResource, null);
+            holder = new ViewHolder();
+            holder.item_title = (TextView) convertView.findViewById(R.id.item_title);
+            holder.item_date = (TextView) convertView.findViewById(R.id.item_date);
+            holder.downloadButton = (Button) convertView.findViewById(R.id.item_action);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
+        }
+```
