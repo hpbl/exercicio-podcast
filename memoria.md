@@ -63,4 +63,5 @@ public View getView(int position, View convertView, ViewGroup parent) {
             holder = (ViewHolder) convertView.getTag();
         }
         ...
+    }
 ```
