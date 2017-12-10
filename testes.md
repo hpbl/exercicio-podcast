@@ -117,3 +117,60 @@ Testes Integração:
  2. Atualização dos dados de um podcast salvo
  3. Pegar podcasts do banco
  4. Deletar um podcast do banco
+
+
+
+Testes De Interface:
+-----------------
+
+Os testes de interface foram realizados usando Espresso, com o intuito de verificar se a interface foi disposta, e reage a ações corretamente.
+
+ 1.  O primeiro podcast apresentado é o primeiro do XML?
+ Queriamos saber se após fazer o parse do XML, e apresentar os resultados na tela, se foi mantida a ordem dos podcasts, sendo assim o primeiro a ser apresentado o que tem título: Ciência e Pseudociência
+ 
+ ```java
+     @Test
+    public void firstPodcast_isCiencia() {
+        String expected = "Ciência e Pseudociência";
+
+        SystemClock.sleep(35000);
+
+        onData(anything())
+                .inAdapterView(withId(R.id.items))
+                .atPosition(0)
+                .onChildView(withId(R.id.item_title))
+                .check(matches(withText(expected)));
+    }
+```
+
+2. O último podcast está com a data certa?
+Queriamos saber se os dados dos podcasts estão condizentes, no caso, se o título do podcast bate com sua data de publicação.
+
+```java
+    @Test
+    public void lastPodcast_hasRightDate() {
+        String title = "Frontdaciência - T08E29 - Mario Bunge I";
+        String expectedDate = "Mon, 18 Sep 2017 12:00:00 GMT";
+
+        SystemClock.sleep(35000);
+
+        onData(withItemTitle(title))
+                .inAdapterView(withId(R.id.items))
+                .onChildView(withId(R.id.item_date))
+                .check(matches(withText(expectedDate)));
+    }
+```
+
+Para conseguir a referência ao item específico da lista, criamos um FeatureMatcher que vai conferir se o item tem o título desejado:
+
+```java
+    private static FeatureMatcher<ItemFeed, String> withItemTitle(final String itemTitle) {
+        return new FeatureMatcher<ItemFeed, String>(equalTo(itemTitle), "with itemTitle", "itemTitle") {
+            @Override
+            protected String featureValueOf(ItemFeed actual) {
+                return actual.getTitle();
+            }
+        };
+    }
+```
+
