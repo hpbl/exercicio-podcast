@@ -51,17 +51,17 @@ Segue abaixo o uso de *RecyclerView* num trecho de código da função `getView`
 
 ```Java
 public View getView(int position, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
-        if (convertView == null) {
-            convertView = View.inflate(getContext(), linkResource, null);
-            holder = new ViewHolder();
-            holder.item_title = (TextView) convertView.findViewById(R.id.item_title);
-            holder.item_date = (TextView) convertView.findViewById(R.id.item_date);
-            holder.downloadButton = (Button) convertView.findViewById(R.id.item_action);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-        ...
+    final ViewHolder holder;
+    if (convertView == null) {
+        convertView = View.inflate(getContext(), linkResource, null);
+        holder = new ViewHolder();
+        holder.item_title = (TextView) convertView.findViewById(R.id.item_title);
+        holder.item_date = (TextView) convertView.findViewById(R.id.item_date);
+        holder.downloadButton = (Button) convertView.findViewById(R.id.item_action);
+        convertView.setTag(holder);
+    } else {
+        holder = (ViewHolder) convertView.getTag();
     }
+    ...
+}
 ```
