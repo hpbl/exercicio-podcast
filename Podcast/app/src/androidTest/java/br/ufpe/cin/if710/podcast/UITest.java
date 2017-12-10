@@ -86,6 +86,31 @@ public class UITest {
                 .check(matches(withText(expectedDate)));
     }
 
+    @Test
+    public void tap_showsRightDetails() {
+        String title = "O Homem foi mesmo até a Lua?";
+        String description = "Programa 2";
+        String date = "Sun, 20 Jun 2010 10:45:05 GMT";
+
+        SystemClock.sleep(40000);
+
+        onData(withItemTitle(title))
+                .inAdapterView(withId(R.id.items))
+                .onChildView(withId(R.id.item_title))
+                .perform(click());
+
+
+        // on EpisodeDetailActivity
+        onView(withId(R.id.title_tv))
+                .check(matches(withText(title)));
+
+        onView(withId(R.id.description_tv))
+                .check(matches(withText(description)));
+
+        onView(withId(R.id.pubDate_tv))
+                .check(matches(withText(date)));
+    }
+
 
     private static FeatureMatcher<ItemFeed, String> withItemTitle(final String itemTitle) {
         return new FeatureMatcher<ItemFeed, String>(equalTo(itemTitle), "with itemTitle", "itemTitle") {
