@@ -50,7 +50,7 @@ O widget *RecyclerView* é uma versão do *ListView*, no qual é um container ca
 Segue abaixo o uso de *RecyclerView* num trecho de código da função `getView`, no qual gerencia se é necessário que a view seja reciclada ou reutilizada.
 
 ```Java
-	public View getView(int position, View convertView, ViewGroup parent) {
+public View getView(int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
         if (convertView == null) {
             convertView = View.inflate(getContext(), linkResource, null);
@@ -62,4 +62,5 @@ Segue abaixo o uso de *RecyclerView* num trecho de código da função `getView`
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+        ...
 ```
