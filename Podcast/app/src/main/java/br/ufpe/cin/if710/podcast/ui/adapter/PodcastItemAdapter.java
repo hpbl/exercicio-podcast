@@ -11,6 +11,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -140,6 +141,8 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
                 // criando intent para trocar de tela
                 Context context = getContext();
                 Intent detailIntent = new Intent(context, EpisodeDetailActivity.class);
+
+                detailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 // passando dados pela intent
                 detailIntent.putExtra(TITLE_EXTRA, holder.item.getTitle());
