@@ -43,11 +43,11 @@ Pudemos realizar essa avaliação com o LeakCanary para as situações 2 e 3, e 
 Boas práticas de desenvolvimento
 -----------------
 
-**RecyclerView**
+**AdapterView**
 
-O widget *RecyclerView* é uma versão do *ListView*, no qual é um container capaz de exibir grandes conjuntos de dados, os quais podem ser rolados com mais eficiência quando mantendo um número limitado de visualizações. É interessante usar *RecyclerView* quando os dados coletados variam constantemente.
+O widget *AdapterView* é uma versão do *ListView*, no qual é um container capaz de exibir grandes conjuntos de dados, os quais podem ser rolados com mais eficiência quando mantendo um número limitado de visualizações. É interessante usar *AdapterView* quando os dados coletados variam constantemente.
 
-Segue abaixo o uso de *RecyclerView* num trecho de código da função `getView`, no qual gerencia se é necessário que a view seja reciclada ou reutilizada.
+Segue abaixo o uso de *AdapterView* num trecho de código da função `getView`, no qual gerencia se é necessário que a view seja reciclada ou reutilizada.
 
 ```Java
 public View getView(int position, View convertView, ViewGroup parent) {
