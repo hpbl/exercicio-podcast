@@ -112,11 +112,177 @@ Testes Integração:
 -----------------
 
  - **Acesso ao Banco de Dados** `(PodcastProvider`/ `PodcastDBHelper`)
+Decidimos testar o nosso ContentProvider, para tentar garantir que as operações de banco de dados foram implementadas corretamente.
+
+Para realizar os testes num ambiente seguro, utilizamos a classe `ProviderTestCase2`. No seu construtor passamos a classe real do nosso ContentProvider, e sua authority:
+
+```java
+public class ContentProviderTest extends ProviderTestCase2<PodcastProvider> {
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+
+        ContentValues cv = new ContentValues();
+        cv.put(PodcastProviderContract.EPISODE_TITLE, "hpbl e rrb");
+        cv.put(PodcastProviderContract.EPISODE_DATE, "Tue, 12 Jun 1915 10:40:05 GMT");
+        cv.put(PodcastProviderContract.EPISODE_LINK, "http://cin.ufpe.br/");
+        cv.put(PodcastProviderContract.EPISODE_DESC, "Ótimos alunos");
+        cv.put(PodcastProviderContract.EPISODE_DOWNLOAD_LINK, "https://hpbl.github.io/nota10.mp3");
+
+        getMockContentResolver().insert(PodcastProviderContract.EPISODE_LIST_URI, cv);
+    }
+
+    public ContentProviderTest() {
+        super(PodcastProvider.class, "br.ufpe.cin.if710.podcast.feed");
+    }
+```
+
+Além disso, fizemos o override da função `setup` a ser rodada antes de cada teste, que insere no banco um podcast inicial, fazendo uso de um `ContentResolver` mock.
+
+
  1.  Inserção de podcast no banco
- 2. 
- 2. Atualização dos dados de um podcast salvo
- 3. Pegar podcasts do banco
- 4. Deletar um podcast do banco
+ 
+Neste teste verificamos que ao criar um novo `ContentValue`, com valores aceitáveis, o mesmo é inserido no banco corretamente:
+
+ ```java
+    @Test
+    public void insertItemFeed_correctly() {
+        ContentValues cv = new ContentValues();
+        cv.put(PodcastProviderContract.EPISODE_TITLE, "Oi tudo bom com você");
+        cv.put(PodcastProviderContract.EPISODE_DATE, "Sun, 20 Jun 2010 10:40:05 GMT");
+        cv.put(PodcastProviderContract.EPISODE_LINK, "http://frontdaciencia.ufrgs.br/#1");
+        cv.put(PodcastProviderContract.EPISODE_DESC, "Programa 1");
+        cv.put(PodcastProviderContract.EPISODE_DOWNLOAD_LINK, "https://hpbl.github.io/hub42_APS/audio/Oi%20Tudo%20Bom.mp3");
+
+        Uri insert_result = getMockContentResolver().insert(PodcastProviderContract.EPISODE_LIST_URI, cv);
+
+        assertNotNull(insert_result);
+    }
+ ```
+
+
+ 2. Remoção de um podcast do banco
+
+Neste teste verificamos que conseguimos remover um podcast que estava previamente no banco com sucesso:
+
+```java
+    @Test
+    public void removeItemFeed_correctly() {
+        String where = PodcastProviderContract.EPISODE_TITLE + "=?";
+        String[] args = {"hpbl e rrb"};
+
+        int remove_resut = getMockContentResolver().delete(
+                PodcastProviderContract.EPISODE_LIST_URI,
+                where,
+                args);
+
+        Assert.assertEquals(1, remove_resut);
+    }
+ ```
+
+ 
+ 3. Ler um podcast do banco
+
+Neste teste verificamos que conseguimos fazer a query de um podcast que foi previamente inserido no banco com sucesso:
+
+```java
+    @Test
+    public void queryItemFeed_correctly() {
+        String selection = PodcastProviderContract.EPISODE_DESC + "=?";
+        String[] args = {"Ótimos alunos"};
+
+        Cursor queryResult = getMockContentResolver().query(
+                                PodcastProviderContract.EPISODE_LIST_URI,
+                                null,
+                                selection,
+                                args,
+                                null);
+
+        Assert.assertEquals(1, queryResult.getCount());
+    }
+```
+
+
+ 4. Erro ao ler um podcast que não existe no banco
+
+ Neste teste verificamos se reamente não existe retorno quando tentamos fazer query de um podcast que nunca foi inserido no banco
+
+```java
+    @Test
+    public void queryItemFeed_incorrectly() {
+        String selection = PodcastProviderContract.EPISODE_DESC + "=?";
+        String[] args = {"Péssimos alunos"};
+
+        Cursor queryResult = getMockContentResolver().query(
+                PodcastProviderContract.EPISODE_LIST_URI,
+                null,
+                selection,
+                args,
+                null);
+
+        Assert.assertEquals(0, queryResult.getCount());
+    }
+```
+ 
+
+ 5. Atualizar um podcast do banco
+
+ Neste teste verificamos que conseguimos atualizar os dados de um podcast que já existe no banco
+
+ ```java
+    @Test
+    public void updateItemFeed_correctly() {
+        ContentValues cv = new ContentValues();
+        cv.put(PodcastProviderContract.EPISODE_TITLE, "Alunos nota 10");
+
+        String where = PodcastProviderContract.EPISODE_DESC + "=?";
+        String[] args = {"Ótimos alunos"};
+
+
+        int update_count = getMockContentResolver().update(
+                PodcastProviderContract.EPISODE_LIST_URI,
+                cv,
+                where,
+                args);
+
+        Assert.assertEquals(1, update_count);
+    }
+ ```
+
+
+6. Inserir um podcast duplicado
+
+Neste teste verificamos que ao tentar inserir um podcast que já existe no banco, o mesmo não é duplicado:
+
+```java
+    @Test
+    public void notInserting_duplicateItemFeed() {
+        ContentValues cv = new ContentValues();
+        cv.put(PodcastProviderContract.EPISODE_TITLE, "hpbl e rrb");
+        cv.put(PodcastProviderContract.EPISODE_DATE, "Tue, 12 Jun 1915 10:40:05 GMT");
+        cv.put(PodcastProviderContract.EPISODE_LINK, "http://cin.ufpe.br/");
+        cv.put(PodcastProviderContract.EPISODE_DESC, "Ótimos alunos");
+        cv.put(PodcastProviderContract.EPISODE_DOWNLOAD_LINK, "https://hpbl.github.io/nota10.mp3");
+
+        Uri insert_result = getMockContentResolver().insert(PodcastProviderContract.EPISODE_LIST_URI, cv);
+
+        assertNotNull(insert_result);
+
+        String selection = PodcastProviderContract.EPISODE_DESC + "=?";
+        String[] args = {"Ótimos alunos"};
+
+        Cursor queryResult = getMockContentResolver().query(
+                PodcastProviderContract.EPISODE_LIST_URI,
+                null,
+                selection,
+                args,
+                null);
+
+        Assert.assertEquals(1, queryResult.getCount());
+    }
+```
 
 ----------
 
