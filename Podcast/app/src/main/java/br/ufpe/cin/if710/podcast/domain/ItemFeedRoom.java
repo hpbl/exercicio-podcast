@@ -72,11 +72,11 @@ public class ItemFeedRoom {
         return downloadLink;
     }
 
-    public String getDownloadURI() {
+    public String getDownloadUri() {
         return downloadUri;
     }
 
-    public void setDownloadURI(String downloadUri) {
+    public void setDownloadUri(String downloadUri) {
         this.downloadUri = downloadUri;
     }
 
