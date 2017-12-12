@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import br.ufpe.cin.if710.podcast.R;
+import br.ufpe.cin.if710.podcast.db.PodcastDatabase;
 import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.domain.ItemFeedRoom;
@@ -261,9 +262,12 @@ class DownloadPodcast extends AsyncTask<Void, Integer, String> {
     private PodcastItemAdapter.ViewHolder holder;
     File outputFile = null;
 
+    public PodcastDatabase db;
+
     public DownloadPodcast(Context context, PodcastItemAdapter.ViewHolder holder) {
         this.context = context;
         this.holder = holder;
+        this.db = PodcastDatabase.getInstance(this.context);
     }
 
     @Override
@@ -362,15 +366,15 @@ class DownloadPodcast extends AsyncTask<Void, Integer, String> {
             Toast.makeText(this.context, "fim do download...", Toast.LENGTH_SHORT).show();
 
             // adicionar URI de download no banco
-            ContentValues content = new ContentValues();
+//            ContentValues content = new ContentValues();
 //            content.put(PodcastProviderContract.EPISODE_FILE_URI, holder.item.getLocalURI());
-            content.put(PodcastProviderContract.EPISODE_FILE_URI, holder.item.getDownloadUri());
-
             //fazer update
-            context.getContentResolver().update(PodcastProviderContract.EPISODE_LIST_URI,
-                    content,
-                    PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
-                    null);
+//            context.getContentResolver().update(PodcastProviderContract.EPISODE_LIST_URI,
+//                    content,
+//                    PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
+//                    null);
+
+            db.podcastDao().update(holder.item);
 
             //atualizar botão
             holder.downloadButton.setText(PodcastItemAdapter.ViewHolder.tocar);
