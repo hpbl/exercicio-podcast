@@ -19,18 +19,13 @@ public abstract class PodcastDatabase extends RoomDatabase {
 
     public abstract PodcastDao podcastDao();
 
-    static final Migration MIGRATION_1_2 = new Migration(1,2) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {}
-    };
-
     public static PodcastDatabase getInstance(Context context) {
         if (instance == null) {
             return Room.databaseBuilder(
-                context,
+                context.getApplicationContext(),
                 PodcastDatabase.class,
                 "podcasts.db")
-                .addMigrations(MIGRATION_1_2)
+                .allowMainThreadQueries()
                 .build();
         }
         return instance;

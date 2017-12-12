@@ -35,9 +35,11 @@ import android.widget.Toast;
 import br.ufpe.cin.if710.podcast.R;
 import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
+import br.ufpe.cin.if710.podcast.domain.ItemFeedRoom;
 import br.ufpe.cin.if710.podcast.ui.EpisodeDetailActivity;
 
-public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
+//public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
+public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
 
     // Constantes para o intent
     public static final String TITLE_EXTRA = "Title";
@@ -49,7 +51,8 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
 
     int linkResource;
 
-    public PodcastItemAdapter(Context context, int resource, List<ItemFeed> objects) {
+//    public PodcastItemAdapter(Context context, int resource, List<ItemFeed> objects) {
+    public PodcastItemAdapter(Context context, int resource, List<ItemFeedRoom> objects) {
         super(context, resource, objects);
         linkResource = resource;
     }
@@ -61,7 +64,8 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
         TextView item_date;
         Button downloadButton;
 
-        ItemFeed item;
+//        ItemFeed item;
+        ItemFeedRoom item;
         MediaPlayer mediaPlayer;
 
         public static final String baixar = "baixar";
@@ -89,7 +93,8 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
         holder.item_date.setText(holder.item.getPubDate());
 
         // se a URI não for vazia, significa que o podcast pode ser tocado
-        if (!holder.item.getLocalURI().equals(PodcastProviderContract.NO_URI)) {
+//        if (!holder.item.getLocalURI().equals(PodcastProviderContract.NO_URI)) {
+        if (!holder.item.getDownloadUri().equals(PodcastProviderContract.NO_URI)) {
             holder.downloadButton.setText(ViewHolder.tocar);
         }
 
@@ -99,14 +104,16 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
             holder.downloadButton.setText(ViewHolder.retomar);
 
             holder.mediaPlayer = MediaPlayer.create(getContext(),
-                    Uri.parse(holder.item.getLocalURI()));
+//                    Uri.parse(holder.item.getLocalURI()));
+                      Uri.parse(holder.item.getDownloadUri()));
 
             holder.mediaPlayer.setLooping(false);
 
             holder.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    File podcast = new File(holder.item.getLocalURI());
+//                    File podcast = new File(holder.item.getLocalURI());
+                    File podcast = new File(holder.item.getDownloadUri());
 
                     if (podcast.delete()) {
                         holder.item.setPlaybackTime(0);
@@ -141,6 +148,8 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
                 Context context = getContext();
                 Intent detailIntent = new Intent(context, EpisodeDetailActivity.class);
 
+                detailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
                 // passando dados pela intent
                 detailIntent.putExtra(TITLE_EXTRA, holder.item.getTitle());
                 detailIntent.putExtra(PUBDATE_EXTRA, holder.item.getPubDate());
@@ -170,7 +179,8 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
 
                         case ViewHolder.tocar:
                             holder.mediaPlayer = MediaPlayer.create(getContext(),
-                                    Uri.parse(holder.item.getLocalURI()));
+//                                    Uri.parse(holder.item.getLocalURI()));
+                                    Uri.parse(holder.item.getDownloadUri()));
 
                             holder.mediaPlayer.setLooping(false);
                             holder.mediaPlayer.start();
@@ -178,7 +188,8 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
                             holder.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                                 @Override
                                 public void onCompletion(MediaPlayer mediaPlayer) {
-                                    File podcast = new File(holder.item.getLocalURI());
+//                                    File podcast = new File(holder.item.getLocalURI());
+                                    File podcast = new File(holder.item.getDownloadUri());
 
                                     if (podcast.delete()) {
                                         holder.item.setPlaybackTime(0);
@@ -318,7 +329,8 @@ class DownloadPodcast extends AsyncTask<Void, Integer, String> {
                 fileOutputStream.write(buffer, 0, len1);
             }
 
-            holder.item.setLocalURI(outputFile.getPath());
+//            holder.item.setLocalURI(outputFile.getPath());
+            holder.item.setDownloadUri(outputFile.getPath());
             fileOutputStream.close();
             inputStream.close();
 
@@ -351,7 +363,8 @@ class DownloadPodcast extends AsyncTask<Void, Integer, String> {
 
             // adicionar URI de download no banco
             ContentValues content = new ContentValues();
-            content.put(PodcastProviderContract.EPISODE_FILE_URI, holder.item.getLocalURI());
+//            content.put(PodcastProviderContract.EPISODE_FILE_URI, holder.item.getLocalURI());
+            content.put(PodcastProviderContract.EPISODE_FILE_URI, holder.item.getDownloadUri());
 
             //fazer update
             context.getContentResolver().update(PodcastProviderContract.EPISODE_LIST_URI,

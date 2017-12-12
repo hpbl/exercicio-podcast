@@ -18,7 +18,8 @@ import br.ufpe.cin.if710.podcast.domain.ItemFeedRoom;
 @Dao
 public interface PodcastDao {
     @Query("SELECT * FROM " + ItemFeedRoom.table_name)
-    LiveData<List<ItemFeedRoom>> getAllItemFeedRoom();
+    List<ItemFeedRoom> getAllItemFeedRoom();
+//    LiveData<List<ItemFeedRoom>> getAllItemFeedRoom();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(ItemFeedRoom itemFeedRoom);

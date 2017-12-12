@@ -9,9 +9,12 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
+
 public class XmlFeedParser {
 
-    public static List<ItemFeed> parse(String xmlFeed) throws XmlPullParserException, IOException {
+//    public static List<ItemFeed> parse(String xmlFeed) throws XmlPullParserException, IOException {
+    public static List<ItemFeedRoom> parse(String xmlFeed) throws XmlPullParserException, IOException {
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         XmlPullParser xpp = factory.newPullParser();
         xpp.setInput(new StringReader(xmlFeed));
@@ -19,9 +22,10 @@ public class XmlFeedParser {
         return readRss(xpp);
     }
 
-    public static List<ItemFeed> readRss(XmlPullParser parser)
-            throws XmlPullParserException, IOException {
-        List<ItemFeed> items = new ArrayList<ItemFeed>();
+//    public static List<ItemFeed> readRss(XmlPullParser parser) throws XmlPullParserException, IOException {
+    public static List<ItemFeedRoom> readRss(XmlPullParser parser) throws XmlPullParserException, IOException {
+//        List<ItemFeed> items = new ArrayList<ItemFeed>();
+        List<ItemFeedRoom> items = new ArrayList<ItemFeedRoom>();
         parser.require(XmlPullParser.START_TAG, null, "rss");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -37,9 +41,10 @@ public class XmlFeedParser {
         return items;
     }
 
-    public static List<ItemFeed> readChannel(XmlPullParser parser)
-            throws IOException, XmlPullParserException {
-        List<ItemFeed> items = new ArrayList<ItemFeed>();
+//    public static List<ItemFeed> readChannel(XmlPullParser parser) throws IOException, XmlPullParserException {
+    public static List<ItemFeedRoom> readChannel(XmlPullParser parser) throws IOException, XmlPullParserException {
+//        List<ItemFeed> items = new ArrayList<ItemFeed>();
+        List<ItemFeedRoom> items = new ArrayList<ItemFeedRoom>();
         parser.require(XmlPullParser.START_TAG, null, "channel");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -55,7 +60,8 @@ public class XmlFeedParser {
         return items;
     }
 
-    public static ItemFeed readItem(XmlPullParser parser) throws XmlPullParserException, IOException {
+//    public static ItemFeed readItem(XmlPullParser parser) throws XmlPullParserException, IOException {
+    public static ItemFeedRoom readItem(XmlPullParser parser) throws XmlPullParserException, IOException {
         String title = null;
         String link = null;
         String pubDate = null;
@@ -88,7 +94,8 @@ public class XmlFeedParser {
                 skip(parser);
             }
         }
-        ItemFeed result = new ItemFeed(title, link, pubDate, description, downloadLink);
+//        ItemFeed result = new ItemFeed(title, link, pubDate, description, downloadLink);
+        ItemFeedRoom result = new ItemFeedRoom(title, link, pubDate, description, downloadLink, PodcastProviderContract.NO_URI, 0);
         return result;
     }
 

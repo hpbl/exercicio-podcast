@@ -3,6 +3,8 @@ package br.ufpe.cin.if710.podcast.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.arch.lifecycle.ViewModelProviders;
+import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -40,8 +42,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.ufpe.cin.if710.podcast.R;
+import br.ufpe.cin.if710.podcast.db.PodcastDataSource;
+import br.ufpe.cin.if710.podcast.db.PodcastDatabase;
 import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
 import br.ufpe.cin.if710.podcast.domain.ItemFeed;
+import br.ufpe.cin.if710.podcast.domain.ItemFeedRoom;
 import br.ufpe.cin.if710.podcast.domain.XmlFeedParser;
 import br.ufpe.cin.if710.podcast.ui.adapter.PodcastItemAdapter;
 
@@ -63,6 +68,9 @@ public class MainActivity extends Activity {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
 
+    // Room
+    PodcastDatabase db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +87,9 @@ public class MainActivity extends Activity {
 
         // conferindo conexão com a internet
         new NetworkCheckTask().execute();
+
+        // Room podcastDatabase initialization
+        db = PodcastDatabase.getInstance(this.getApplicationContext());
 
         Log.d(this.TAG, "hpbl ON CREATE");
     }
@@ -163,65 +174,75 @@ public class MainActivity extends Activity {
     }
 
     // AssyncTask para pegar podcasts do banco de dados
-    private class DataBaseTask extends  AsyncTask<Void, Void, Cursor> {
+//    private class DataBaseTask extends  AsyncTask<Void, Void, Cursor> {
+    private class DataBaseTask extends  AsyncTask<Void, Void, List<ItemFeedRoom>> {
         @Override
         protected void onPreExecute() {
             // indicativo visual que o carregamento está sendo do banco
             Toast.makeText(getApplicationContext(), "consultando banco", Toast.LENGTH_SHORT).show();
         }
 
+//        @Override
+//        protected Cursor doInBackground(Void... voids) {
+//
+//            // fazendo consulta (query) do banco
+//            Cursor cursor = getContentResolver()
+//                    .query(PodcastProviderContract.EPISODE_LIST_URI,
+//                            null,
+//                            null,
+//                            null,
+//                            null);
+//
+//            return cursor;
+//        }
+
         @Override
-        protected Cursor doInBackground(Void... voids) {
-
-            // fazendo consulta (query) do banco
-            Cursor cursor = getContentResolver()
-                    .query(PodcastProviderContract.EPISODE_LIST_URI,
-                            null,
-                            null,
-                            null,
-                            null);
-
-            return cursor;
+        protected List<ItemFeedRoom> doInBackground(Void... voids) {
+            List<ItemFeedRoom> items = db.podcastDao().getAllItemFeedRoom();
+            Log.d("doInBackground", "itemFeedRoom count: " + items.size());
+            return items;
         }
 
         @Override
-        protected void onPostExecute(Cursor cursor) {
+//        protected void onPostExecute(Cursor cursor) {
+        protected void onPostExecute(List<ItemFeedRoom> items) {
             // caso não tenha nada no banco
-            if ((cursor == null) || (cursor.getCount() == 0)) {
+//            if ((cursor == null) || (cursor.getCount() == 0)) {
+            if (items.size() == 0) {
                 // informe ao usuário que ele precisa de internet
                 Toast.makeText(getApplicationContext(), "Conecte-se à internet", Toast.LENGTH_LONG).show();
             // caso tenha conteúdo no banco
-            } else {
+            }
+            else {
                 Toast.makeText(getApplicationContext(), "terminando...", Toast.LENGTH_SHORT).show();
 
-                List<ItemFeed> items = new ArrayList<>();
-
-                while (cursor.moveToNext()) {
-                    String title = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_TITLE));
-                    String link = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_LINK));
-                    String date = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DATE));
-                    String description = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DESC));
-                    String downloadLink = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DOWNLOAD_LINK));
-                    String localUri = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_FILE_URI));
-                    String playbackTime = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_PLAYBACK_TIME));
-
-                    ItemFeed item = new ItemFeed(title, link, date, description, downloadLink);
-                    item.setLocalURI(localUri);
-
-                    if (playbackTime != null) {
-                        int time = Integer.parseInt(playbackTime);
-                        item.setPlaybackTime(time);
-                    } else {
-                        item.setPlaybackTime(0);
-                    }
-
-                    items.add(item);
-                }
+//                List<ItemFeed> items = new ArrayList<>();
+//
+//                while (cursor.moveToNext()) {
+//                    String title = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_TITLE));
+//                    String link = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_LINK));
+//                    String date = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DATE));
+//                    String description = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DESC));
+//                    String downloadLink = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DOWNLOAD_LINK));
+//                    String localUri = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_FILE_URI));
+//                    String playbackTime = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_PLAYBACK_TIME));
+//
+//                    ItemFeed item = new ItemFeed(title, link, date, description, downloadLink);
+//                    item.setLocalURI(localUri);
+//
+//                    if (playbackTime != null) {
+//                        int time = Integer.parseInt(playbackTime);
+//                        item.setPlaybackTime(time);
+//                    } else {
+//                        item.setPlaybackTime(0);
+//                    }
+//
+//                    items.add(item);
+//                }
 
                 //Adapter Personalizado
-                PodcastItemAdapter adapter = new PodcastItemAdapter(getApplicationContext(),
-                                                                    R.layout.itemlista,
-                                                                    items);
+//                List<ItemFeed> items2 = new ArrayList<>();
+                PodcastItemAdapter adapter = new PodcastItemAdapter(getApplicationContext(), R.layout.itemlista, items);
 
                 //atualizar o list view
                 itemsListView.setAdapter(adapter);

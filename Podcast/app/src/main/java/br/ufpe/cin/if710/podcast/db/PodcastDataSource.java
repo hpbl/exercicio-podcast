@@ -14,15 +14,17 @@ import br.ufpe.cin.if710.podcast.domain.ItemFeedRoom;
  */
 
 public class PodcastDataSource extends AndroidViewModel {
-    private LiveData<List<ItemFeedRoom>> podcasts;
+//    private LiveData<List<ItemFeedRoom>> podcasts;
+    private List<ItemFeedRoom> podcasts;
 
     public PodcastDataSource(Application application) {
         super(application);
     }
 
-    public LiveData<List<ItemFeedRoom>> getAllItemFeedRoom(Application application) {
+//    public LiveData<List<ItemFeedRoom>> getAllItemFeedRoom(Application application) {
+    public List<ItemFeedRoom> getAllItemFeedRoom(Application application) {
         if (podcasts == null) {
-            podcasts = new MutableLiveData<>();
+//            podcasts = new MutableLiveData<>();
             podcasts = PodcastDatabase.getInstance(application.getApplicationContext()).podcastDao().getAllItemFeedRoom();
         }
         return podcasts;
