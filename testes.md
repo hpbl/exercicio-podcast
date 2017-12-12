@@ -284,6 +284,9 @@ Neste teste verificamos que ao tentar inserir um podcast que já existe no banco
     }
 ```
 
+![UnitTestsResult](Images/ItegrationTestsResult.png)
+
+
 ----------
 
 
