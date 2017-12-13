@@ -5,7 +5,7 @@ Realizamos a refatoração do código, com o objetivo de eliminar o uso do SQLit
 
 Para tal, utilizamos a biblioteca de persistência Room, no qual seguimos as coordenadas indicadas pelo artigo https://medium.com/@ajaysaini.official/building-database-with-room-persistence-library-ecf7d0b8f3e9. Os passos para implementar a sua utlizização foram:
 
-- Criação do DAO (Data Access Object), o qual define os métodos de acesso do banco de dados, usando *annotation* para acoplar o SQL a cada um dos métodos;
+- Criação do DAO (Data Access Object), o qual define os métodos de acesso do banco de dados, usando *annotation* para acoplar o SQL a cada um dos métodos. Para utilizar os métodos no código, basta obter uma instância do banco de dados (o qual é descrito no próximo tópico) e invocar o método;
 
 ```Java
 @Dao
@@ -21,7 +21,7 @@ public interface PodcastDao {
 }
 ```
 
-- Criação da classe de banco de dados, o qual de fato usa a implementação do Room para lidar com a criação de uma instância do banco de dados. Para tal, foi utilizado o padrão de projeto *Singleton*;
+- Criação da classe de banco de dados, o qual de fato usa a implementação do Room para lidar com a criação de uma instância do banco de dados. Além disso, ele possui acesso ao DAO (descrito anteriormente) para poder invocar as funcionalidades do banco de dados. Para tal, foi utilizado o padrão de projeto *Singleton*;
 
 ```Java
 @Database(entities = {ItemFeedRoom.class}, version = 4)
