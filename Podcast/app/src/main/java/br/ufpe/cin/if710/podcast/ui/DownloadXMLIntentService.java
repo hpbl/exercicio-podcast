@@ -1,11 +1,8 @@
 package br.ufpe.cin.if710.podcast.ui;
 
 import android.app.IntentService;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -17,12 +14,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import br.ufpe.cin.if710.podcast.db.PodcastDao;
 import br.ufpe.cin.if710.podcast.db.PodcastDatabase;
-import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
-import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.domain.ItemFeedRoom;
 import br.ufpe.cin.if710.podcast.domain.XmlFeedParser;
 

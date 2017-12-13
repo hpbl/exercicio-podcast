@@ -1,32 +1,21 @@
 package br.ufpe.cin.if710.podcast.ui.adapter;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
-import android.content.ClipData;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
@@ -34,8 +23,6 @@ import android.widget.Toast;
 
 import br.ufpe.cin.if710.podcast.R;
 import br.ufpe.cin.if710.podcast.db.PodcastDatabase;
-import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
-import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.domain.ItemFeedRoom;
 import br.ufpe.cin.if710.podcast.ui.EpisodeDetailActivity;
 
@@ -94,7 +81,7 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
         holder.item_date.setText(holder.item.getPubDate());
 
         // se a URI não for vazia, significa que o podcast pode ser tocado
-        if (!holder.item.getDownloadUri().equals(PodcastProviderContract.NO_URI)) {
+        if (!holder.item.getDownloadUri().equals(ItemFeedRoom.NO_URI)) {
             holder.downloadButton.setText(ViewHolder.tocar);
         }
 
@@ -115,7 +102,7 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
 
                     if (podcast.delete()) {
                         holder.item.setPlaybackTime(0);
-                        holder.item.setDownloadUri(PodcastProviderContract.NO_URI);
+                        holder.item.setDownloadUri(ItemFeedRoom.NO_URI);
 
                         db.podcastDao().update(holder.item);
 
@@ -179,7 +166,7 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
 
                                     if (podcast.delete()) {
                                         holder.item.setPlaybackTime(0);
-                                        holder.item.setDownloadUri(PodcastProviderContract.NO_URI);
+                                        holder.item.setDownloadUri(ItemFeedRoom.NO_URI);
 
                                         db.podcastDao().update(holder.item);
 

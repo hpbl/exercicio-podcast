@@ -22,12 +22,6 @@
         </activity>
         <activity android:name=".ui.SettingsActivity" />
 
-        <provider
-            android:name=".db.PodcastProvider"
-            android:authorities="br.ufpe.cin.if710.podcast.feed"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity
             android:name=".ui.EpisodeDetailActivity"
             android:parentActivityName=".ui.MainActivity"></activity>

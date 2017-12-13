@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 public class ItemFeedRoom {
 
 	public static final String table_name = "episodes";
+	public static final String NO_URI = "SEMURI";
 
 	@ColumnInfo(name = "title")
 	@NonNull

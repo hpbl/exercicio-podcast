@@ -9,8 +9,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
-
 public class XmlFeedParser {
 
     public static List<ItemFeedRoom> parse(String xmlFeed) throws XmlPullParserException, IOException {
@@ -89,7 +87,7 @@ public class XmlFeedParser {
             }
         }
 
-        ItemFeedRoom result = new ItemFeedRoom(title, link, pubDate, description, downloadLink, PodcastProviderContract.NO_URI, 0);
+        ItemFeedRoom result = new ItemFeedRoom(title, link, pubDate, description, downloadLink, ItemFeedRoom.NO_URI, 0);
         return result;
     }
 
