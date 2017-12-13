@@ -141,6 +141,8 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
                 Context context = getContext();
                 Intent detailIntent = new Intent(context, EpisodeDetailActivity.class);
 
+                detailIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
                 // passando dados pela intent
                 detailIntent.putExtra(TITLE_EXTRA, holder.item.getTitle());
                 detailIntent.putExtra(PUBDATE_EXTRA, holder.item.getPubDate());

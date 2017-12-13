@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
     //COMPLETED teste com outros links de podcast
 
     private ListView itemsListView;
-    private FinishedDownloadingReceiver broadcastReceiver;
+    public FinishedDownloadingReceiver broadcastReceiver;
     private String TAG = "Main Activity";
     private Boolean isInForeground = true;
 
