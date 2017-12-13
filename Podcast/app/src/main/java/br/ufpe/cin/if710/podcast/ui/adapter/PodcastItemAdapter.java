@@ -52,10 +52,13 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
 
     int linkResource;
 
+    public PodcastDatabase db;
+
 //    public PodcastItemAdapter(Context context, int resource, List<ItemFeed> objects) {
     public PodcastItemAdapter(Context context, int resource, List<ItemFeedRoom> objects) {
         super(context, resource, objects);
         linkResource = resource;
+        this.db = PodcastDatabase.getInstance(this.getContext());
     }
 
 
@@ -118,19 +121,21 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
 
                     if (podcast.delete()) {
                         holder.item.setPlaybackTime(0);
+                        holder.item.setDownloadUri(PodcastProviderContract.NO_URI);
+                        db.podcastDao().update(holder.item);
 
                         // salvando nova URI e playback novos no banco
-                        ContentValues content = new ContentValues();
-                        content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
-                        content.put(PodcastProviderContract.EPISODE_FILE_URI, PodcastProviderContract.NO_URI);
-
-                        //fazer update
-                        getContext()
-                                .getContentResolver()
-                                .update(PodcastProviderContract.EPISODE_LIST_URI,
-                                        content,
-                                        PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
-                                        null);
+//                        ContentValues content = new ContentValues();
+//                        content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
+//                        content.put(PodcastProviderContract.EPISODE_FILE_URI, PodcastProviderContract.NO_URI);
+//
+//                        //fazer update
+//                        getContext()
+//                                .getContentResolver()
+//                                .update(PodcastProviderContract.EPISODE_LIST_URI,
+//                                        content,
+//                                        PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
+//                                        null);
 
                         holder.downloadButton.setText(ViewHolder.baixar);
                     } else {
@@ -194,19 +199,21 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
 
                                     if (podcast.delete()) {
                                         holder.item.setPlaybackTime(0);
+                                        holder.item.setDownloadUri(PodcastProviderContract.NO_URI);
+                                        db.podcastDao().update(holder.item);
 
                                         // salvando nova URI e playback novos no banco
-                                        ContentValues content = new ContentValues();
-                                        content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
-                                        content.put(PodcastProviderContract.EPISODE_FILE_URI, PodcastProviderContract.NO_URI);
-
-                                        //fazer update
-                                        getContext()
-                                                .getContentResolver()
-                                                .update(PodcastProviderContract.EPISODE_LIST_URI,
-                                                        content,
-                                                        PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
-                                                        null);
+//                                        ContentValues content = new ContentValues();
+//                                        content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
+//                                        content.put(PodcastProviderContract.EPISODE_FILE_URI, PodcastProviderContract.NO_URI);
+//
+//                                        //fazer update
+//                                        getContext()
+//                                                .getContentResolver()
+//                                                .update(PodcastProviderContract.EPISODE_LIST_URI,
+//                                                        content,
+//                                                        PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
+//                                                        null);
 
                                         holder.downloadButton.setText(ViewHolder.baixar);
                                     } else {
@@ -224,18 +231,19 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
                             int currentPosition = holder.mediaPlayer.getCurrentPosition();
                             Log.d(TAG, "current position: " + currentPosition);
                             holder.item.setPlaybackTime(currentPosition);
+                            db.podcastDao().update(holder.item);
 
                             //salvar a posição atual no banco
-                            ContentValues content = new ContentValues();
-                            content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
-
-                            //fazer update
-                            getContext()
-                                    .getContentResolver()
-                                    .update(PodcastProviderContract.EPISODE_LIST_URI,
-                                            content,
-                                            PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
-                                            null);
+//                            ContentValues content = new ContentValues();
+//                            content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
+//
+//                            //fazer update
+//                            getContext()
+//                                    .getContentResolver()
+//                                    .update(PodcastProviderContract.EPISODE_LIST_URI,
+//                                            content,
+//                                            PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
+//                                            null);
 
                             button.setText(ViewHolder.retomar);
                             break;

@@ -21,7 +21,7 @@ public interface PodcastDao {
     List<ItemFeedRoom> getAllItemFeedRoom();
 //    LiveData<List<ItemFeedRoom>> getAllItemFeedRoom();
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(ItemFeedRoom itemFeedRoom);
 
     @Update
