@@ -1,7 +1,7 @@
 # Exercício - Podcast Player
 
-# A entrega do segundo exercício está localizada no branch "Segunda-Entrega".
-# A implementação do Room promovida pelo segundo exercício está localizada no branch "arch-comp".
+# A implementação do Room promovida pelo segundo exercício está localizada no branch "arch-comp" (incluindo o arquivo "archcomponents.md").
+# A entrega das outras atividades do segundo exercício está localizada no branch "Segunda-Entrega" (incluindo o restante dos md's).
 
 Esta tarefa envolve os conceitos de UI widgets, Threads, Services, Custom Adapters, 
 Intents, Permissions, SharedPreferences, SQLite, Broadcast Receivers. 
