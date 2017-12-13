@@ -1,5 +1,8 @@
 # Exercício - Podcast Player
 
+# A entrega do segundo exercício está localizada no branch "Segunda-Entrega".
+# A implementação do Room promovida pelo segundo exercício está localizada no branch "arch-comp".
+
 Esta tarefa envolve os conceitos de UI widgets, Threads, Services, Custom Adapters, 
 Intents, Permissions, SharedPreferences, SQLite, Broadcast Receivers. 
 Faça um *fork* deste projeto, siga os passos na ordem sugerida abaixo e identifique quais 
