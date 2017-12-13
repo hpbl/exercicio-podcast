@@ -39,7 +39,6 @@ import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.domain.ItemFeedRoom;
 import br.ufpe.cin.if710.podcast.ui.EpisodeDetailActivity;
 
-//public class PodcastItemAdapter extends ArrayAdapter<ItemFeed> {
 public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
 
     // Constantes para o intent
@@ -54,7 +53,6 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
 
     public PodcastDatabase db;
 
-//    public PodcastItemAdapter(Context context, int resource, List<ItemFeed> objects) {
     public PodcastItemAdapter(Context context, int resource, List<ItemFeedRoom> objects) {
         super(context, resource, objects);
         linkResource = resource;
@@ -68,7 +66,6 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
         TextView item_date;
         Button downloadButton;
 
-//        ItemFeed item;
         ItemFeedRoom item;
         MediaPlayer mediaPlayer;
 
@@ -97,7 +94,6 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
         holder.item_date.setText(holder.item.getPubDate());
 
         // se a URI não for vazia, significa que o podcast pode ser tocado
-//        if (!holder.item.getLocalURI().equals(PodcastProviderContract.NO_URI)) {
         if (!holder.item.getDownloadUri().equals(PodcastProviderContract.NO_URI)) {
             holder.downloadButton.setText(ViewHolder.tocar);
         }
@@ -108,7 +104,6 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
             holder.downloadButton.setText(ViewHolder.retomar);
 
             holder.mediaPlayer = MediaPlayer.create(getContext(),
-//                    Uri.parse(holder.item.getLocalURI()));
                       Uri.parse(holder.item.getDownloadUri()));
 
             holder.mediaPlayer.setLooping(false);
@@ -116,26 +111,13 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
             holder.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-//                    File podcast = new File(holder.item.getLocalURI());
                     File podcast = new File(holder.item.getDownloadUri());
 
                     if (podcast.delete()) {
                         holder.item.setPlaybackTime(0);
                         holder.item.setDownloadUri(PodcastProviderContract.NO_URI);
-                        db.podcastDao().update(holder.item);
 
-                        // salvando nova URI e playback novos no banco
-//                        ContentValues content = new ContentValues();
-//                        content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
-//                        content.put(PodcastProviderContract.EPISODE_FILE_URI, PodcastProviderContract.NO_URI);
-//
-//                        //fazer update
-//                        getContext()
-//                                .getContentResolver()
-//                                .update(PodcastProviderContract.EPISODE_LIST_URI,
-//                                        content,
-//                                        PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
-//                                        null);
+                        db.podcastDao().update(holder.item);
 
                         holder.downloadButton.setText(ViewHolder.baixar);
                     } else {
@@ -185,7 +167,6 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
 
                         case ViewHolder.tocar:
                             holder.mediaPlayer = MediaPlayer.create(getContext(),
-//                                    Uri.parse(holder.item.getLocalURI()));
                                     Uri.parse(holder.item.getDownloadUri()));
 
                             holder.mediaPlayer.setLooping(false);
@@ -194,26 +175,13 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
                             holder.mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                                 @Override
                                 public void onCompletion(MediaPlayer mediaPlayer) {
-//                                    File podcast = new File(holder.item.getLocalURI());
                                     File podcast = new File(holder.item.getDownloadUri());
 
                                     if (podcast.delete()) {
                                         holder.item.setPlaybackTime(0);
                                         holder.item.setDownloadUri(PodcastProviderContract.NO_URI);
-                                        db.podcastDao().update(holder.item);
 
-                                        // salvando nova URI e playback novos no banco
-//                                        ContentValues content = new ContentValues();
-//                                        content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
-//                                        content.put(PodcastProviderContract.EPISODE_FILE_URI, PodcastProviderContract.NO_URI);
-//
-//                                        //fazer update
-//                                        getContext()
-//                                                .getContentResolver()
-//                                                .update(PodcastProviderContract.EPISODE_LIST_URI,
-//                                                        content,
-//                                                        PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
-//                                                        null);
+                                        db.podcastDao().update(holder.item);
 
                                         holder.downloadButton.setText(ViewHolder.baixar);
                                     } else {
@@ -231,19 +199,8 @@ public class PodcastItemAdapter extends ArrayAdapter<ItemFeedRoom> {
                             int currentPosition = holder.mediaPlayer.getCurrentPosition();
                             Log.d(TAG, "current position: " + currentPosition);
                             holder.item.setPlaybackTime(currentPosition);
-                            db.podcastDao().update(holder.item);
 
-                            //salvar a posição atual no banco
-//                            ContentValues content = new ContentValues();
-//                            content.put(PodcastProviderContract.EPISODE_PLAYBACK_TIME, holder.item.getPlaybackTime());
-//
-//                            //fazer update
-//                            getContext()
-//                                    .getContentResolver()
-//                                    .update(PodcastProviderContract.EPISODE_LIST_URI,
-//                                            content,
-//                                            PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
-//                                            null);
+                            db.podcastDao().update(holder.item);
 
                             button.setText(ViewHolder.retomar);
                             break;
@@ -372,15 +329,6 @@ class DownloadPodcast extends AsyncTask<Void, Integer, String> {
         } else {
             Log.d(TAG, "Terminou de baixar!");
             Toast.makeText(this.context, "fim do download...", Toast.LENGTH_SHORT).show();
-
-            // adicionar URI de download no banco
-//            ContentValues content = new ContentValues();
-//            content.put(PodcastProviderContract.EPISODE_FILE_URI, holder.item.getLocalURI());
-            //fazer update
-//            context.getContentResolver().update(PodcastProviderContract.EPISODE_LIST_URI,
-//                    content,
-//                    PodcastProviderContract.EPISODE_LINK + "= \"" + holder.item.getLink() + "\"",
-//                    null);
 
             db.podcastDao().update(holder.item);
 

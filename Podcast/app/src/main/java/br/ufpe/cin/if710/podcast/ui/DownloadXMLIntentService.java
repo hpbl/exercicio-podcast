@@ -41,30 +41,10 @@ public class DownloadXMLIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-//        List<ItemFeed> itemList = new ArrayList<>();
         List<ItemFeedRoom> itemList = new ArrayList<>();
         try {
             String feedURL = intent.getStringExtra(FEED_EXTRA);
             itemList = XmlFeedParser.parse(getRssFeed(feedURL));
-
-//            for (ItemFeed item : itemList) {
-//                ContentValues content = new ContentValues();
-//
-//                content.put(PodcastProviderContract.EPISODE_TITLE, item.getTitle());
-//                content.put(PodcastProviderContract.EPISODE_DATE, item.getPubDate());
-//                content.put(PodcastProviderContract.EPISODE_LINK, item.getLink());
-//                content.put(PodcastProviderContract.EPISODE_DESC, item.getDescription());
-//                content.put(PodcastProviderContract.EPISODE_DOWNLOAD_LINK, item.getDownloadLink());
-//
-//                Uri uri = getContentResolver().insert(PodcastProviderContract.EPISODE_LIST_URI,
-//                        content);
-//
-//                if (uri != null) {
-//                    Log.d("Main Activity", "Item inseridos com sucesso");
-//                } else {
-//                    Log.e("Main Activity", "Falha na inserção do item: " + item.toString());
-//                }
-//            }
 
             PodcastDatabase db = PodcastDatabase.getInstance(getApplicationContext());
             for (ItemFeedRoom item : itemList) {

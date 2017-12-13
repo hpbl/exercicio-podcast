@@ -3,18 +3,13 @@ package br.ufpe.cin.if710.podcast.ui;
 import android.Manifest;
 import android.app.Activity;
 import android.app.NotificationManager;
-import android.arch.lifecycle.ViewModelProviders;
-import android.arch.persistence.room.Room;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -27,27 +22,14 @@ import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 
-import org.xmlpull.v1.XmlPullParserException;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.List;
 
 import br.ufpe.cin.if710.podcast.R;
-import br.ufpe.cin.if710.podcast.db.PodcastDataSource;
 import br.ufpe.cin.if710.podcast.db.PodcastDatabase;
-import br.ufpe.cin.if710.podcast.db.PodcastProviderContract;
-import br.ufpe.cin.if710.podcast.domain.ItemFeed;
 import br.ufpe.cin.if710.podcast.domain.ItemFeedRoom;
-import br.ufpe.cin.if710.podcast.domain.XmlFeedParser;
 import br.ufpe.cin.if710.podcast.ui.adapter.PodcastItemAdapter;
 
 public class MainActivity extends Activity {
@@ -174,27 +156,12 @@ public class MainActivity extends Activity {
     }
 
     // AssyncTask para pegar podcasts do banco de dados
-//    private class DataBaseTask extends  AsyncTask<Void, Void, Cursor> {
     private class DataBaseTask extends  AsyncTask<Void, Void, List<ItemFeedRoom>> {
         @Override
         protected void onPreExecute() {
             // indicativo visual que o carregamento está sendo do banco
             Toast.makeText(getApplicationContext(), "consultando banco", Toast.LENGTH_SHORT).show();
         }
-
-//        @Override
-//        protected Cursor doInBackground(Void... voids) {
-//
-//            // fazendo consulta (query) do banco
-//            Cursor cursor = getContentResolver()
-//                    .query(PodcastProviderContract.EPISODE_LIST_URI,
-//                            null,
-//                            null,
-//                            null,
-//                            null);
-//
-//            return cursor;
-//        }
 
         @Override
         protected List<ItemFeedRoom> doInBackground(Void... voids) {
@@ -204,10 +171,8 @@ public class MainActivity extends Activity {
         }
 
         @Override
-//        protected void onPostExecute(Cursor cursor) {
         protected void onPostExecute(List<ItemFeedRoom> items) {
             // caso não tenha nada no banco
-//            if ((cursor == null) || (cursor.getCount() == 0)) {
             if (items.size() == 0) {
                 // informe ao usuário que ele precisa de internet
                 Toast.makeText(getApplicationContext(), "Conecte-se à internet", Toast.LENGTH_LONG).show();
@@ -216,32 +181,7 @@ public class MainActivity extends Activity {
             else {
                 Toast.makeText(getApplicationContext(), "terminando...", Toast.LENGTH_SHORT).show();
 
-//                List<ItemFeed> items = new ArrayList<>();
-//
-//                while (cursor.moveToNext()) {
-//                    String title = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_TITLE));
-//                    String link = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_LINK));
-//                    String date = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DATE));
-//                    String description = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DESC));
-//                    String downloadLink = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_DOWNLOAD_LINK));
-//                    String localUri = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_FILE_URI));
-//                    String playbackTime = cursor.getString(cursor.getColumnIndex(PodcastProviderContract.EPISODE_PLAYBACK_TIME));
-//
-//                    ItemFeed item = new ItemFeed(title, link, date, description, downloadLink);
-//                    item.setLocalURI(localUri);
-//
-//                    if (playbackTime != null) {
-//                        int time = Integer.parseInt(playbackTime);
-//                        item.setPlaybackTime(time);
-//                    } else {
-//                        item.setPlaybackTime(0);
-//                    }
-//
-//                    items.add(item);
-//                }
-
                 //Adapter Personalizado
-//                List<ItemFeed> items2 = new ArrayList<>();
                 PodcastItemAdapter adapter = new PodcastItemAdapter(getApplicationContext(), R.layout.itemlista, items);
 
                 //atualizar o list view
