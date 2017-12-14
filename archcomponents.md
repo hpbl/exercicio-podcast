@@ -118,4 +118,4 @@ public class ItemFeedRoom {
 }
 ```
 
-Não obtivemos sucesso na implementação do LiveData. Chegamos a analisar que era necessário alterar MainActivity para ser um AppCompatActivity, mas não tivemos sucesso em recuperar um objeto do tipo *LiveData<List<ItemFeedRoom>>* a partir da *query* criada no DAO, enquanto que obtivemos sucesso em recuperar um objeto do tipo *List<ItemFeedRoom>*.
+Não obtivemos sucesso na implementação do LiveData. Chegamos a analisar que era necessário alterar MainActivity para ser um AppCompatActivity, mas não tivemos sucesso em recuperar um objeto do tipo *LiveData<List<ItemFeedRoom\>\>* a partir da *query* criada no DAO, enquanto que obtivemos sucesso em recuperar um objeto do tipo *List<ItemFeedRoom\>*.
